@@ -1,16 +1,3 @@
-# uum_service
+#UUM Service
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+UUM Service is a platform that allows students to buy and sell services over the application. The applications will perform multiple functions such as order services, manage own services, manage own accounts,etc. The goal of this project is to provide a platform to help students in UUM to find services easily and help service providers to promote their services.
