@@ -1,12 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../models/user.dart';
+import '../../serverconfig.dart';
 import '../screens/buyerscreen.dart';
 import '../screens/loginscreen.dart';
 import '../screens/profilescreen.dart';
+import '../screens/sellerscreeen.dart';
 import 'EnterExitRoute.dart';
-
-// import '../screens/profilescreen.dart';
-// import '../screens/sellerscreen.dart';
 
 class MainMenuWidget extends StatefulWidget {
   final User user;
@@ -17,6 +17,14 @@ class MainMenuWidget extends StatefulWidget {
 }
 
 class _MainMenuWidgetState extends State<MainMenuWidget> {
+  var _imageStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    _imageStatus = widget.user.image;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -32,9 +40,10 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
       return ListView(children: [
         const UserAccountsDrawerHeader(
           accountEmail: Text(""),
-          accountName: Text("Please login"),
+          accountName: Text(" Please login"),
           currentAccountPicture: CircleAvatar(
             radius: 30.0,
+            backgroundImage: AssetImage("assets/images/profile.png"),
           ),
         ),
         ListTile(
@@ -89,13 +98,37 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
     } else {
       return ListView(
         children: [
-          UserAccountsDrawerHeader(
-            accountEmail: Text(widget.user.email.toString()),
-            accountName: Text(widget.user.name.toString()),
-            currentAccountPicture: const CircleAvatar(
-              radius: 30.0,
-            ),
-          ),
+          _imageStatus == 'no'
+              ? UserAccountsDrawerHeader(
+                  accountEmail: Text("  ${widget.user.email}"),
+                  accountName: Text("  ${widget.user.name}"),
+                  currentAccountPicture: const CircleAvatar(
+                    radius: 30.0,
+                    backgroundImage: AssetImage("assets/images/profile.png"),
+                  ),
+                )
+              : UserAccountsDrawerHeader(
+                  accountEmail: Text("  ${widget.user.email}"),
+                  accountName: Text("  ${widget.user.name}"),
+                  currentAccountPicture: Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.transparent,
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          "${ServerConfig.server}/assets/profileimages/${widget.user.id}.png",
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error, size: 30),
+                      imageBuilder: (context, imageProvider) => CircleAvatar(
+                        backgroundImage: imageProvider,
+                        radius: 30,
+                      ),
+                    ),
+                  ),
+                ),
           ListTile(
             leading: const Icon(Icons.account_circle_rounded),
             title: const Text('Profile'),
@@ -113,6 +146,11 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
             title: const Text('Seller'),
             onTap: () {
               Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  EnterExitRoute(
+                      exitPage: BuyerScreen(user: widget.user),
+                      enterPage: SellerScreen(user: widget.user)));
               // Navigator.push(
               //     context,
               //     MaterialPageRoute(
@@ -212,10 +250,12 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
   void _logoutUser() {
     User user = User(
         id: "0",
+        image: "no",
         email: "unregistered",
         name: "unregistered",
         address: "na",
         phone: "0123456789",
+        verify: "no",
         regdate: "0");
     Navigator.pushReplacement(context,
         MaterialPageRoute(builder: (content) => BuyerScreen(user: user)));

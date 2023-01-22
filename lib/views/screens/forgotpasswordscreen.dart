@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
-import '../../config.dart';
+import '../../serverconfig.dart';
 import 'resetpasswordscreen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -109,7 +109,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     }
 
     String _email = _emailEditingController.text;
-    http.post(Uri.parse("${Config.server}/php/forgot_password.php"),
+    http.post(Uri.parse("${ServerConfig.server}/php/forgot_password.php"),
         body: {"email": _email, "submit": "submit"}).then((response) {
       var jsonResponse = jsonDecode(response.body);
       if (response.statusCode == 200 && jsonResponse['status'] == 'success') {

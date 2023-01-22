@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
-import '../../config.dart';
+import '../../serverconfig.dart';
 import 'loginscreen.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -172,7 +172,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       return;
     }
 
-    http.post(Uri.parse("${Config.server}/php/forgot_password.php"), body: {
+    http.post(Uri.parse("${ServerConfig.server}/php/forgot_password.php"), body: {
       "reEmail": widget.email,
       "password": _passa,
       "reset": "reset"

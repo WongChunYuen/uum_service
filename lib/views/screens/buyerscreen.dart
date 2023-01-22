@@ -26,7 +26,7 @@ class _BuyerScreenState extends State<BuyerScreen> {
       appBar: AppBar(
         title: const Text("UUM Service"),
         actions: [
-          verifyLogin(),
+          searchService(),
         ],
       ),
       body: const Center(child: Text("No services yet")),
@@ -34,63 +34,12 @@ class _BuyerScreenState extends State<BuyerScreen> {
     );
   }
 
-  Widget verifyLogin() {
-    if (widget.user.id.toString() == "0" &&
-        widget.user.email.toString() == "unregistered") {
-      return IconButton(
-          onPressed: _loginButton, icon: const Icon(Icons.account_circle));
-    } else {
-      return PopupMenuButton<int>(
-        icon: const Icon(Icons.account_circle),
-        itemBuilder: (context) => [
-          const PopupMenuItem(
-            value: 1,
-            child: Text('Profile'),
-          ),
-          const PopupMenuItem(
-            value: 2,
-            child: Text('My Homestay'),
-          ),
-          const PopupMenuItem(
-            value: 3,
-            child: Text('Logout'),
-          ),
-        ],
-        onSelected: (value) {
-          if (value == 1) {
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (content) => ProfileScreen(user: widget.user)));
-          } else if (value == 2) {
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (content) => OwnerScreen(user: widget.user)));
-          } else if (value == 3) {
-            _logoutUser();
-          }
-        },
-      );
-    }
+  Widget searchService() {
+    return IconButton(onPressed: _gotoSearch, icon: const Icon(Icons.search));
   }
 
-  // login method to let user go to login screen
-  void _loginButton() {
+  void _gotoSearch() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (content) => const LoginScreen()));
-  }
-
-  // Method that let user to log out
-  void _logoutUser() {
-    User user = User(
-        id: "0",
-        email: "unregistered",
-        name: "unregistered",
-        address: "na",
-        phone: "0123456789",
-        regdate: "0");
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (content) => BuyerScreen(user: user)));
+        context, MaterialPageRoute(builder: (content) => LoginScreen()));
   }
 }

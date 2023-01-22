@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
-import '../../config.dart';
+import '../../serverconfig.dart';
 
 // Register screen for the Homestay Raya application
 class RegisterScreen extends StatefulWidget {
@@ -352,7 +352,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _registerUser(String name, String email, String phone, String pass) {
     try {
-      http.post(Uri.parse("${Config.server}/php/register_user.php"), body: {
+      http.post(Uri.parse("${ServerConfig.server}/php/register_user.php"), body: {
         "name": name,
         "email": email,
         "phone": phone,
