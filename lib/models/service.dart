@@ -1,6 +1,7 @@
 class Service {
   String? serviceId;
   String? userId;
+  String? serviceImages;
   String? serviceName;
   String? serviceDesc;
   String? servicePrice;
@@ -15,6 +16,7 @@ class Service {
   Service(
       {this.serviceId,
       this.userId,
+      this.serviceImages,
       this.serviceName,
       this.serviceDesc,
       this.servicePrice,
@@ -29,6 +31,7 @@ class Service {
   Service.fromJson(Map<String, dynamic> json) {
     serviceId = json['service_id'];
     userId = json['user_id'];
+    serviceImages = json['service_imagesNum'];
     serviceName = json['service_name'];
     serviceDesc = json['service_desc'];
     servicePrice = json['service_price'];
@@ -45,6 +48,7 @@ class Service {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['service_id'] = serviceId;
     data['user_id'] = userId;
+    data['service_imagesNum'] = serviceImages;
     data['service_name'] = serviceName;
     data['service_desc'] = serviceDesc;
     data['service_price'] = servicePrice;

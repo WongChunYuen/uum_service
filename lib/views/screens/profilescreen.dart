@@ -48,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return WillPopScope(
       onWillPop: () async {
         Navigator.pop(context);
-        Navigator.push(
+        Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (content) => BuyerScreen(user: widget.user)));
@@ -757,7 +757,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         val = random.nextInt(1000);
         if (widget.user.verify == 'no') {
           Navigator.pop(context);
-          Navigator.pushReplacement(
+          Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (content) => ProfileScreen(user: user)));

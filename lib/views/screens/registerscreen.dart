@@ -352,13 +352,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _registerUser(String name, String email, String phone, String pass) {
     try {
-      http.post(Uri.parse("${ServerConfig.server}/php/register_user.php"), body: {
-        "name": name,
-        "email": email,
-        "phone": phone,
-        "password": pass,
-        "register": "register"
-      }).then((response) {
+      http.post(Uri.parse("${ServerConfig.server}/php/register_user.php"),
+          body: {
+            "name": name,
+            "email": email,
+            "phone": phone,
+            "password": pass,
+            "register": "register"
+          }).then((response) {
         var data = jsonDecode(response.body);
         if (response.statusCode == 200 && data['status'] == "success") {
           Fluttertoast.showToast(

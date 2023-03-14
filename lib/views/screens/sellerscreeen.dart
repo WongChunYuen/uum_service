@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -10,6 +11,7 @@ import 'package:ndialog/ndialog.dart';
 import '../../models/service.dart';
 import '../../models/user.dart';
 import '../../serverconfig.dart';
+import 'detailscreen.dart';
 import 'newservicescreen.dart';
 
 class SellerScreen extends StatefulWidget {
@@ -26,7 +28,6 @@ class _SellerScreenState extends State<SellerScreen> {
   List<Service> serviceList = <Service>[];
   String titlecenter = "Loading...";
   var placemarks;
-
   late double screenHeight, screenWidth, resWidth;
   int rowcount = 2;
 
@@ -54,7 +55,7 @@ class _SellerScreenState extends State<SellerScreen> {
       rowcount = 3;
     }
     return Scaffold(
-      appBar: AppBar(title: const Text("My Service"), actions: [
+      appBar: AppBar(title: const Text("My Services"), actions: [
         PopupMenuButton(itemBuilder: (context) {
           return [
             const PopupMenuItem<int>(
@@ -100,10 +101,10 @@ class _SellerScreenState extends State<SellerScreen> {
                         elevation: 8,
                         child: InkWell(
                           onTap: () {
-                            // show details of the service
+                            _showDetails(index);
                           },
                           onLongPress: () {
-                            // delete the service
+                            _deleteDialog(index);
                           },
                           child: Column(children: [
                             const SizedBox(
@@ -252,32 +253,117 @@ class _SellerScreenState extends State<SellerScreen> {
           "${ServerConfig.server}/php/load_service.php?userid=${widget.user.id}"),
     )
         .then((response) {
-      if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response
-            .body); //decode response body that retrieved to jsondata array
+      var jsondata = jsonDecode(response.body);
+      if (response.statusCode == 200 && jsondata['status'] == 'success') {
+        var jsondata = jsonDecode(response.body);
         if (jsondata['status'] == 'success') {
-          var extractdata = jsondata['data']; //extract data from jsondata array
+          var extractdata = jsondata['data'];
           if (extractdata['services'] != null) {
             serviceList = <Service>[];
             extractdata['services'].forEach((v) {
-              //traverse services array list and add to the list object array serviceList
-              serviceList.add(Service.fromJson(
-                  v)); //add each product array to the list object array serviceList
+              serviceList.add(Service.fromJson(v));
             });
             titlecenter = "Found";
           } else {
-            titlecenter =
-                "No Service Available"; //if no data returned show title center
+            titlecenter = "No Service Available";
             serviceList.clear();
           }
         } else {
           titlecenter = "No Service Available";
+          serviceList.clear();
         }
-      } else {
-        titlecenter = "No Service Available"; //status code other than 200
-        serviceList.clear(); //clear serviceList array
       }
-      setState(() {});
+      setState(() {
+        DefaultCacheManager manager = DefaultCacheManager();
+        manager.emptyCache();
+      });
     });
+  }
+
+  Future<void> _showDetails(int index) async {
+    Service service = Service.fromJson(serviceList[index].toJson());
+
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (content) => DetailsScreen(
+                  service: service,
+                  user: widget.user,
+                )));
+    _loadServices();
+  }
+
+  void _deleteDialog(int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          title: Text(
+            "Delete ${truncateString(serviceList[index].serviceName.toString(), 15)}",
+            textAlign: TextAlign.center,
+          ),
+          content: const Text("Are you sure?", textAlign: TextAlign.center),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  child: const Text(
+                    "Yes",
+                    style: TextStyle(),
+                  ),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    _deleteService(index);
+                  },
+                ),
+                TextButton(
+                  child: const Text(
+                    "No",
+                    style: TextStyle(),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _deleteService(index) {
+    try {
+      http.post(Uri.parse("${ServerConfig.server}/php/delete_service.php"),
+          body: {
+            "serviceid": serviceList[index].serviceId,
+          }).then((response) {
+        var data = jsonDecode(response.body);
+        if (response.statusCode == 200 && data['status'] == "success") {
+          Fluttertoast.showToast(
+              msg: "Success",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              fontSize: 14.0);
+          _loadServices();
+          return;
+        } else {
+          Fluttertoast.showToast(
+              msg: "Failed",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              fontSize: 14.0);
+          return;
+        }
+      });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }

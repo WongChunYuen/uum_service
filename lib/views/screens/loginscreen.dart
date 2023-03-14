@@ -154,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 8,
             ),
             GestureDetector(
-              onTap: _goHome,
+              onTap: _forgotPassword,
               child:
                   const Text("Forgot Password", style: TextStyle(fontSize: 18)),
             )
@@ -183,9 +183,8 @@ class _LoginScreenState extends State<LoginScreen> {
       "password": _pass,
       "login": "login"
     }).then((response) {
-      if (response.statusCode == 200) {
-        var jsonResponse = json.decode(response.body);
-        
+      var jsonResponse = json.decode(response.body);
+      if (response.statusCode == 200 && jsonResponse['status'] == 'success') {
         User user = User.fromJson(jsonResponse['data']);
         Navigator.pop(context);
         Navigator.pushReplacement(context,
@@ -202,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // Method that let user reset password
-  void _goHome() {
+  void _forgotPassword() {
     Navigator.push(context,
         MaterialPageRoute(builder: (content) => const ForgotPasswordScreen()));
   }

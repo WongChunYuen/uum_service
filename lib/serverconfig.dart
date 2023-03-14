@@ -1,3 +1,3 @@
 class ServerConfig {
-  static const String server = "http://192.168.0.131/uum_service";
+  static const String server = "http://192.168.0.130/uum_service";
 }

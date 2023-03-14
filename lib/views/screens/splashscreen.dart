@@ -28,6 +28,9 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
           Image.asset('assets/images/logo.png', scale: 0.9),
+          const SizedBox(
+            height: 30,
+          ),
           const Text("UUM SERVICE",
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
           const SizedBox(
@@ -41,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
           const SizedBox(
             height: 140,
           ),
-          const Text("Version BETA"),
+          const Text("Version 1.0"),
           const SizedBox(
             height: 100,
           ),
