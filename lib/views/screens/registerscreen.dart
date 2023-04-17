@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../serverconfig.dart';
+import 'otpscreen.dart';
 
 // Register screen for the Homestay Raya application
 class RegisterScreen extends StatefulWidget {
@@ -252,45 +253,99 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
+    http.post(Uri.parse("${ServerConfig.server}/php/forgot_password.php"),
+        body: {"email": _email, "submit": "submit"}).then((response) {
+      var jsonResponse = jsonDecode(response.body);
+      if (response.statusCode == 200 && jsonResponse['status'] == 'success') {
+        Fluttertoast.showToast(
+            msg: "Email have been registered",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+        return;
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              title: const Text(
+                "Register",
+                textAlign: TextAlign.center,
+              ),
+              content: const Text(
+                "Are you sure to register a new account?",
+                textAlign: TextAlign.center,
+              ),
+              actions: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                      child: const Text(
+                        "Yes",
+                        style: TextStyle(),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _otpDialog(_name, _email, _phone, _passa);
+                      },
+                    ),
+                    TextButton(
+                      child: const Text(
+                        "No",
+                        style: TextStyle(),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      }
+    });
+  }
+
+  void _otpDialog(String name, String email, String phone, String pass) {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           title: const Text(
-            "Register",
-            textAlign: TextAlign.center,
-          ),
-          content: const Text(
-            "Are you sure to register a new account?",
+            "The OTP number will send to your email address.",
             textAlign: TextAlign.center,
           ),
           actions: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                TextButton(
-                  child: const Text(
-                    "Yes",
-                    style: TextStyle(),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
-                    _registerUser(_name, _email, _phone, _passa);
-                  },
+            Center(
+              child: TextButton(
+                child: const Text(
+                  "Sure",
+                  style: TextStyle(),
                 ),
-                TextButton(
-                  child: const Text(
-                    "No",
-                    style: TextStyle(),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
+                onPressed: () {
+                  _sendOTP(email);
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (content) => OTPScreen(
+                                name: name,
+                                email: email,
+                                phone: phone,
+                                password: pass,
+                                screen: "register",
+                              )));
+                },
+              ),
             ),
           ],
         );
@@ -350,20 +405,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  void _registerUser(String name, String email, String phone, String pass) {
+  void _sendOTP(String email) {
     try {
-      http.post(Uri.parse("${ServerConfig.server}/php/register_user.php"),
-          body: {
-            "name": name,
-            "email": email,
-            "phone": phone,
-            "password": pass,
-            "register": "register"
-          }).then((response) {
+      http.post(Uri.parse("${ServerConfig.server}/php/send_otp.php"),
+          body: {"email": email}).then((response) {
         var data = jsonDecode(response.body);
         if (response.statusCode == 200 && data['status'] == "success") {
           Fluttertoast.showToast(
-              msg: "Register success",
+              msg: "OTP sent successfully",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 1,
@@ -371,7 +420,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           return;
         } else {
           Fluttertoast.showToast(
-              msg: "This email has been registered",
+              msg: "Fail to sent OTP number",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 1,
@@ -381,7 +430,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
     } catch (e) {
       Fluttertoast.showToast(
-          msg: "Fail to register",
+          msg: "Fail to sent OTP number",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,

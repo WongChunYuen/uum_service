@@ -1,13 +1,9 @@
 import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
-import 'package:ndialog/ndialog.dart';
 import '../../models/service.dart';
 import '../../models/user.dart';
 import '../../serverconfig.dart';
@@ -23,13 +19,14 @@ class SellerScreen extends StatefulWidget {
 }
 
 class _SellerScreenState extends State<SellerScreen> {
-  var _lat, _lng;
-  late Position _position;
   List<Service> serviceList = <Service>[];
   String titlecenter = "Loading...";
-  var placemarks;
   late double screenHeight, screenWidth, resWidth;
   int rowcount = 2;
+
+  Future refresh() async {
+    _loadServices();
+  }
 
   @override
   void initState() {
@@ -39,7 +36,6 @@ class _SellerScreenState extends State<SellerScreen> {
 
   @override
   void dispose() {
-    serviceList = [];
     super.dispose();
   }
 
@@ -81,6 +77,7 @@ class _SellerScreenState extends State<SellerScreen> {
                   style: const TextStyle(
                       fontSize: 22, fontWeight: FontWeight.bold)))
           : Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -90,71 +87,150 @@ class _SellerScreenState extends State<SellerScreen> {
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
-                const SizedBox(
-                  height: 4,
-                ),
                 Expanded(
-                  child: GridView.count(
-                    crossAxisCount: rowcount,
-                    children: List.generate(serviceList.length, (index) {
-                      return Card(
-                        elevation: 8,
-                        child: InkWell(
-                          onTap: () {
-                            _showDetails(index);
-                          },
-                          onLongPress: () {
-                            _deleteDialog(index);
-                          },
-                          child: Column(children: [
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            Flexible(
-                              flex: 6,
-                              child: CachedNetworkImage(
-                                width: resWidth / 2,
-                                fit: BoxFit.cover,
-                                imageUrl:
-                                    "${ServerConfig.server}/assets/serviceimages/${serviceList[index].serviceId}_1.png",
-                                placeholder: (context, url) =>
-                                    const LinearProgressIndicator(),
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
-                              ),
-                            ),
-                            Flexible(
-                                flex: 4,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        truncateString(
-                                            serviceList[index]
-                                                .serviceName
-                                                .toString(),
-                                            15),
-                                        style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                          "RM ${double.parse(serviceList[index].servicePrice.toString()).toStringAsFixed(2)}"),
-                                      Text(serviceList[index]
-                                          .serviceDate
-                                          .toString()),
-                                    ],
-                                  ),
-                                ))
-                          ]),
-                        ),
-                      );
-                    }),
-                  ),
-                )
+                    child: RefreshIndicator(
+                        onRefresh: refresh, child: MyStatefulWidget())),
               ],
             ),
+      floatingActionButton: Align(
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: FloatingActionButton(
+            onPressed: () {
+              _gotoNewService();
+            },
+            child: const Icon(Icons.add),
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  Widget MyStatefulWidget() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(10.0),
+      itemCount: serviceList.length,
+      itemBuilder: (context, index) {
+        return InkWell(
+          onTap: () {
+            _showDetails(index);
+          },
+          child: CustomListItemTwo(
+              thumbnail: CachedNetworkImage(
+                imageUrl:
+                    "${ServerConfig.server}/assets/serviceimages/${serviceList[index].serviceId}_1.png",
+                placeholder: (context, url) => const LinearProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
+              title: serviceList[index].serviceName.toString(),
+              subtitle: serviceList[index].serviceDesc.toString(),
+              price:
+                  "RM ${double.parse(serviceList[index].servicePrice.toString()).toStringAsFixed(2)}",
+              index: index),
+        );
+      },
+    );
+  }
+
+  Widget CustomListItemTwo({
+    required Widget thumbnail,
+    required String title,
+    required String subtitle,
+    required String price,
+    required int index,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: SizedBox(
+        height: 120,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            AspectRatio(
+              aspectRatio: 1.0,
+              child: thumbnail,
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20.0, 0.0, 2.0, 0.0),
+                child: _ArticleDescription(
+                  title: title,
+                  subtitle: subtitle,
+                  price: price,
+                ),
+              ),
+            ),
+            PopupMenuButton<int>(
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                const PopupMenuItem<int>(
+                  value: 0,
+                  child: Text('Delete'),
+                ),
+              ],
+              onSelected: (value) {
+                if (value == 0) {
+                  _deleteDialog(index);
+                }
+              },
+              child: const Icon(
+                Icons.more_vert,
+                size: 20.0,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _ArticleDescription({
+    required String title,
+    required String subtitle,
+    required String price,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
+                ),
+              ),
+              const Padding(padding: EdgeInsets.only(bottom: .0)),
+              const SizedBox(height: 8),
+              Text(
+                subtitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.justify,
+                style: const TextStyle(
+                  fontSize: 14.0,
+                  color: Colors.black54,
+                ),
+              ),
+              const Padding(padding: EdgeInsets.only(bottom: .0)),
+              const SizedBox(height: 8),
+              Text(
+                price,
+                style: const TextStyle(
+                  fontSize: 17.0,
+                  color: Colors.black54,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -167,83 +243,14 @@ class _SellerScreenState extends State<SellerScreen> {
     }
   }
 
-  Future<void> _gotoNewService() async {
-    ProgressDialog progressDialog = ProgressDialog(
-      context,
-      blur: 10,
-      message: const Text("Searching your current location"),
-      title: null,
-    );
-    progressDialog.show();
-    if (await _checkPermissionGetLoc()) {
-      progressDialog.dismiss();
-      await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (content) => NewServiceScreen(
-                  position: _position,
+  void _gotoNewService() async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (content) => NewServiceScreen(
                   user: widget.user,
-                  placemarks: placemarks)));
-      _loadServices();
-    } else {
-      Fluttertoast.showToast(
-          msg: "Please allow the app to access the location",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          fontSize: 14.0);
-      progressDialog.dismiss();
-    }
-  }
-
-//check permission,get location,get address return false if any problem.
-  Future<bool> _checkPermissionGetLoc() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        Fluttertoast.showToast(
-            msg: "Please allow the app to access the location",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            fontSize: 14.0);
-        Geolocator.openLocationSettings();
-        return false;
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      Fluttertoast.showToast(
-          msg: "Please allow the app to access the location",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          fontSize: 14.0);
-      Geolocator.openLocationSettings();
-      return false;
-    }
-    _position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best);
-    try {
-      placemarks = await placemarkFromCoordinates(
-          _position.latitude, _position.longitude);
-    } catch (e) {
-      Fluttertoast.showToast(
-          msg:
-              "Error in fixing your location. Make sure internet connection is available and try again.",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          fontSize: 14.0);
-      return false;
-    }
-    return true;
+                )));
+    _loadServices();
   }
 
   void _loadServices() {

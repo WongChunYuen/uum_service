@@ -31,9 +31,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
   final TextEditingController _spriceEditingController =
       TextEditingController();
   final TextEditingController _saddrEditingController = TextEditingController();
-  final TextEditingController _sstateEditingController =
-      TextEditingController();
-  final TextEditingController _slocalEditingController =
+  final TextEditingController _sbankaccEditingController =
       TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
@@ -42,6 +40,14 @@ class _DetailsScreenState extends State<DetailsScreen> {
   var pathAsset = "assets/images/camera.png";
   bool _editKey = false;
   late double screenHeight, screenWidth, resWidth;
+  String selectBank = "";
+  List<String> bankList = [
+    "Please select a Bank",
+    "Bank 1",
+    "Bank 2",
+    "Bank 3",
+    "MayBank",
+  ];
 
   @override
   void initState() {
@@ -215,6 +221,60 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
+                  _editKey
+                      ? DropdownButtonFormField(
+                          value: selectBank,
+                          decoration: const InputDecoration(
+                              labelText: 'Bank',
+                              labelStyle: TextStyle(),
+                              icon: Icon(Icons.add_card),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(width: 2.0),
+                              )),
+                          onChanged: (newValue) {
+                            setState(() {
+                              selectBank = newValue.toString();
+                            });
+                          },
+                          items: bankList.map((selectBank) {
+                            return DropdownMenuItem(
+                                value: selectBank,
+                                child: Text(
+                                  selectBank,
+                                ));
+                          }).toList(),
+                        )
+                      : DropdownButtonFormField(
+                          value: selectBank,
+                          decoration: const InputDecoration(
+                              labelText: 'Bank',
+                              icon: Icon(Icons.add_card),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(width: 2.0),
+                              )),
+                          onChanged: null,
+                          items: bankList.map((selectBank) {
+                            return DropdownMenuItem(
+                                value: selectBank,
+                                child: Text(
+                                  selectBank,
+                                ));
+                          }).toList(),
+                        ),
+                  TextFormField(
+                      enabled: _editKey,
+                      textInputAction: TextInputAction.next,
+                      controller: _sbankaccEditingController,
+                      validator: (val) =>
+                          val!.isEmpty ? "Please enter bank account" : null,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                          labelText: 'Bank Account',
+                          labelStyle: TextStyle(),
+                          icon: Icon(Icons.add_card),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(width: 2.0),
+                          ))),
                   TextFormField(
                       enabled: _editKey,
                       textInputAction: TextInputAction.next,
@@ -229,46 +289,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
-                  Row(
-                    children: [
-                      Flexible(
-                          flex: 5,
-                          child: TextFormField(
-                              textInputAction: TextInputAction.next,
-                              validator: (val) =>
-                                  val!.isEmpty || (val.length < 3)
-                                      ? "State"
-                                      : null,
-                              enabled: false,
-                              controller: _sstateEditingController,
-                              keyboardType: TextInputType.text,
-                              decoration: const InputDecoration(
-                                  labelText: 'States',
-                                  labelStyle: TextStyle(),
-                                  icon: Icon(Icons.flag),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(width: 2.0),
-                                  )))),
-                      Flexible(
-                        flex: 5,
-                        child: TextFormField(
-                            textInputAction: TextInputAction.next,
-                            enabled: false,
-                            validator: (val) => val!.isEmpty || (val.length < 3)
-                                ? "Locality"
-                                : null,
-                            controller: _slocalEditingController,
-                            keyboardType: TextInputType.text,
-                            decoration: const InputDecoration(
-                                labelText: 'Locality',
-                                labelStyle: TextStyle(),
-                                icon: Icon(Icons.map),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(width: 2.0),
-                                ))),
-                      )
-                    ],
-                  ),
                   const SizedBox(
                     height: 16,
                   ),
@@ -519,12 +539,21 @@ class _DetailsScreenState extends State<DetailsScreen> {
   }
 
   void _updateService() {
+    if (selectBank == "Please select a Bank") {
+      Fluttertoast.showToast(
+          msg: "Please select a Bank",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          fontSize: 14.0);
+      return;
+    }
     String sname = _snameEditingController.text;
     String sdesc = _sdescEditingController.text;
     String sprice = _spriceEditingController.text;
     String saddr = _saddrEditingController.text;
-    String state = _sstateEditingController.text;
-    String local = _slocalEditingController.text;
+    String sbank = selectBank;
+    String sbankacc = _sbankaccEditingController.text;
     List<String> base64Images = [];
     for (int i = 0; i < _imageList.length; i++) {
       base64Images.add(base64Encode(_imageList[i].readAsBytesSync()));
@@ -539,6 +568,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
           "sdesc": sdesc,
           "sprice": sprice,
           "saddr": saddr,
+          "sbank": sbank,
+          "sbankacc": sbankacc,
           "image": images,
         }).then((response) {
       var data = jsonDecode(response.body);
@@ -552,7 +583,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
         _editKey = false;
         DefaultCacheManager manager = DefaultCacheManager();
         manager.emptyCache();
-        setState(() {});
+        setState(() {selectBank = sbank;});
         return;
       } else {
         Fluttertoast.showToast(
@@ -645,8 +676,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
     _sdescEditingController.text = widget.service.serviceDesc.toString();
     _spriceEditingController.text = widget.service.servicePrice.toString();
     _saddrEditingController.text = widget.service.serviceAddress.toString();
-    _sstateEditingController.text = widget.service.serviceState.toString();
-    _slocalEditingController.text = widget.service.serviceLocal.toString();
+    _sbankaccEditingController.text = widget.service.serviceBankAcc.toString();
+    selectBank = widget.service.serviceBank.toString();
   }
 
   Future<void> _loadImages() async {

@@ -154,7 +154,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
     if (!_formKey.currentState!.validate()) {
       Fluttertoast.showToast(
-          msg: "Please complete the registration form first!",
+          msg: "Please complete the form first!",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
@@ -172,11 +172,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       return;
     }
 
-    http.post(Uri.parse("${ServerConfig.server}/php/forgot_password.php"), body: {
-      "reEmail": widget.email,
-      "password": _passa,
-      "reset": "reset"
-    }).then((response) {
+    http.post(Uri.parse("${ServerConfig.server}/php/forgot_password.php"),
+        body: {
+          "reEmail": widget.email,
+          "password": _passa,
+          "reset": "reset"
+        }).then((response) {
       var jsonResponse = jsonDecode(response.body);
       if (response.statusCode == 200 && jsonResponse['status'] == 'success') {
         showDialog(
@@ -202,7 +203,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       style: TextStyle(fontSize: 20),
                     ),
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.of(context).pop();
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (content) => const LoginScreen()));

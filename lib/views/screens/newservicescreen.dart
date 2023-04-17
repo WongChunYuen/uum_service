@@ -4,21 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 import '../../models/user.dart';
 import '../../serverconfig.dart';
+import 'sellerscreeen.dart';
 
 class NewServiceScreen extends StatefulWidget {
   final User user;
-  final Position position;
-  final List<Placemark> placemarks;
-  const NewServiceScreen(
-      {super.key,
-      required this.user,
-      required this.position,
-      required this.placemarks});
+
+  const NewServiceScreen({
+    super.key,
+    required this.user,
+  });
 
   @override
   State<NewServiceScreen> createState() => _NewServiceScreenState();
@@ -32,22 +29,15 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
   final TextEditingController _saddrEditingController = TextEditingController();
   final TextEditingController _sbankaccEditingController =
       TextEditingController();
-  final TextEditingController _sstateEditingController =
-      TextEditingController();
-  final TextEditingController _slocalEditingController =
-      TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  var _lat, _lng;
-
-  @override
-  void initState() {
-    super.initState();
-    _lat = widget.position.latitude.toString();
-    _lng = widget.position.longitude.toString();
-    _sstateEditingController.text =
-        widget.placemarks[0].administrativeArea.toString();
-    _slocalEditingController.text = widget.placemarks[0].locality.toString();
-  }
+  String selectBank = "Please select a Bank";
+  List<String> bankList = [
+    "Please select a Bank",
+    "Bank 1",
+    "Bank 2",
+    "Bank 3",
+    "MayBank",
+  ];
 
   File? _image;
   final List<File> _imageList = [];
@@ -153,6 +143,28 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
+                  DropdownButtonFormField(
+                    value: selectBank,
+                    decoration: const InputDecoration(
+                        labelText: 'Bank',
+                        labelStyle: TextStyle(),
+                        icon: Icon(Icons.add_card),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(width: 2.0),
+                        )),
+                    onChanged: (newValue) {
+                      setState(() {
+                        selectBank = newValue.toString();
+                      });
+                    },
+                    items: bankList.map((selectBank) {
+                      return DropdownMenuItem(
+                          value: selectBank,
+                          child: Text(
+                            selectBank,
+                          ));
+                    }).toList(),
+                  ),
                   TextFormField(
                       textInputAction: TextInputAction.next,
                       controller: _sbankaccEditingController,
@@ -179,46 +191,6 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
-                  Row(
-                    children: [
-                      Flexible(
-                          flex: 5,
-                          child: TextFormField(
-                              textInputAction: TextInputAction.next,
-                              validator: (val) =>
-                                  val!.isEmpty || (val.length < 3)
-                                      ? "State"
-                                      : null,
-                              enabled: false,
-                              controller: _sstateEditingController,
-                              keyboardType: TextInputType.text,
-                              decoration: const InputDecoration(
-                                  labelText: 'States',
-                                  labelStyle: TextStyle(),
-                                  icon: Icon(Icons.flag),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(width: 2.0),
-                                  )))),
-                      Flexible(
-                        flex: 5,
-                        child: TextFormField(
-                            textInputAction: TextInputAction.next,
-                            enabled: false,
-                            validator: (val) => val!.isEmpty || (val.length < 3)
-                                ? "Locality"
-                                : null,
-                            controller: _slocalEditingController,
-                            keyboardType: TextInputType.text,
-                            decoration: const InputDecoration(
-                                labelText: 'Locality',
-                                labelStyle: TextStyle(),
-                                icon: Icon(Icons.map),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(width: 2.0),
-                                ))),
-                      )
-                    ],
-                  ),
                   const SizedBox(
                     height: 16,
                   ),
@@ -243,18 +215,36 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
   }
 
   void _newServiceDialog() {
-    if (_imageList.length < 2) {
+    if (_imageList.isEmpty) {
       Fluttertoast.showToast(
-          msg: "Please insert THREE images",
+          msg: "Please insert image",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
           fontSize: 14.0);
       return;
     }
+    // if (_imageList.length < 2) {
+    //   Fluttertoast.showToast(
+    //       msg: "Please insert THREE images",
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.BOTTOM,
+    //       timeInSecForIosWeb: 1,
+    //       fontSize: 14.0);
+    //   return;
+    // }
     if (!_formKey.currentState!.validate()) {
       Fluttertoast.showToast(
           msg: "Please complete the form first",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          fontSize: 14.0);
+      return;
+    }
+    if (selectBank == "Please select a Bank") {
+      Fluttertoast.showToast(
+          msg: "Please select a Bank",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
@@ -358,7 +348,6 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        // return object of type Dialog
         return AlertDialog(
             title: const Text(
               "Select picture from:",
@@ -448,8 +437,6 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
     String sprice = _spriceEditingController.text;
     String sbankacc = _sbankaccEditingController.text;
     String saddr = _saddrEditingController.text;
-    String state = _sstateEditingController.text;
-    String local = _slocalEditingController.text;
     List<String> base64Images = [];
     for (int i = 0; i < _imageList.length; i++) {
       base64Images.add(base64Encode(_imageList[i].readAsBytesSync()));
@@ -462,12 +449,9 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
           "sname": sname,
           "sdesc": sdesc,
           "sprice": sprice,
+          "sbank": selectBank.toString(),
           "sbankacc": sbankacc,
           "saddr": saddr,
-          "state": state,
-          "local": local,
-          "lat": _lat,
-          "lon": _lng,
           "image": images,
           "registerservice": "registerservice"
         }).then((response) {
@@ -480,6 +464,13 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
             timeInSecForIosWeb: 1,
             fontSize: 14.0);
         Navigator.of(context).pop();
+        
+        Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (content) => SellerScreen(
+                  user: widget.user,
+                )));
         return;
       } else {
         Fluttertoast.showToast(

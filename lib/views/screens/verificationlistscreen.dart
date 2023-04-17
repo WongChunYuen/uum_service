@@ -1,59 +1,48 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:ndialog/ndialog.dart';
-import '../../models/service.dart';
 import '../../models/user.dart';
 import '../../serverconfig.dart';
-import '../shared/mainmenu.dart';
-import 'buyerdetailscreen.dart';
-import 'searchscreen.dart';
+import 'adminuserscreen.dart';
+import 'searchuserscreen.dart';
 
-class BuyerScreen extends StatefulWidget {
-  final User user;
-  const BuyerScreen({super.key, required this.user});
+class VerificationListScreen extends StatefulWidget {
+  const VerificationListScreen({super.key});
 
   @override
-  State<BuyerScreen> createState() => _BuyerScreenState();
+  State<VerificationListScreen> createState() => _VerificationListScreenState();
 }
 
-class _BuyerScreenState extends State<BuyerScreen> {
-  List<Service> serviceList = <Service>[];
+class _VerificationListScreenState extends State<VerificationListScreen> {
+  List<User> userList = <User>[];
   String titlecenter = "Loading...";
-  late double screenHeight, screenWidth, resWidth;
-  var seller;
   var color;
   var numofpage, curpage = 1;
   int numberofresult = 0;
-  int limit = 5;
+  int limit = 10;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _loadServices(1);
+      _loadUsers(1);
     });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("UUM Service"),
+        title: const Text("Verification List"),
         actions: [
-          searchService(),
+          searchUser(), // search user (need to change it later)
         ],
       ),
-      body: serviceList.isEmpty
+      body: userList.isEmpty
           ? Center(
               child: Text(titlecenter,
                   style: const TextStyle(
@@ -64,7 +53,7 @@ class _BuyerScreenState extends State<BuyerScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    "Services ($numberofresult found)",
+                    "Total users need to verify: $numberofresult",
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),
@@ -83,7 +72,7 @@ class _BuyerScreenState extends State<BuyerScreen> {
                         color = Colors.black;
                       }
                       return TextButton(
-                          onPressed: () => {_loadServices(index + 1)},
+                          onPressed: () => {_loadUsers(index + 1)},
                           child: Text(
                             (index + 1).toString(),
                             style: TextStyle(color: color, fontSize: 18),
@@ -93,31 +82,44 @@ class _BuyerScreenState extends State<BuyerScreen> {
                 ),
               ],
             ),
-      drawer: MainMenuWidget(user: widget.user),
     );
   }
 
   Widget MyStatefulWidget() {
     return ListView.builder(
       padding: const EdgeInsets.all(10.0),
-      itemCount: serviceList.length,
+      itemCount: userList.length,
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () {
             _showDetails(index);
           },
-          child: CustomListItemTwo(
-              thumbnail: CachedNetworkImage(
-                imageUrl:
-                    "${ServerConfig.server}/assets/serviceimages/${serviceList[index].serviceId}_1.png",
-                placeholder: (context, url) => const LinearProgressIndicator(),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-              ),
-              title: serviceList[index].serviceName.toString(),
-              subtitle: serviceList[index].serviceDesc.toString(),
-              price:
-                  "RM ${double.parse(serviceList[index].servicePrice.toString()).toStringAsFixed(2)}",
-              index: index),
+          child: userList[index].image == "no"
+              ? CustomListItemTwo(
+                  thumbnail: ClipOval(
+                    child: Image.asset(
+                      "assets/images/profile.png",
+                      height: 150,
+                      width: 150,
+                    ),
+                  ),
+                  id: "ID: ${userList[index].id}",
+                  name: userList[index].name.toString(),
+                  index: index)
+              : CustomListItemTwo(
+                  thumbnail: ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          "${ServerConfig.server}/assets/profileimages/${userList[index].id}.png",
+                      placeholder: (context, url) =>
+                          const LinearProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
+                    ),
+                  ),
+                  id: "ID: ${userList[index].id}",
+                  name: userList[index].name.toString(),
+                  index: index),
         );
       },
     );
@@ -125,15 +127,14 @@ class _BuyerScreenState extends State<BuyerScreen> {
 
   Widget CustomListItemTwo({
     required Widget thumbnail,
-    required String title,
-    required String subtitle,
-    required String price,
+    required String id,
+    required String name,
     required int index,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: SizedBox(
-        height: 120,
+        height: 60,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -145,9 +146,8 @@ class _BuyerScreenState extends State<BuyerScreen> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20.0, 0.0, 2.0, 0.0),
                 child: _ArticleDescription(
-                  title: title,
-                  subtitle: subtitle,
-                  price: price,
+                  id: id,
+                  name: name,
                 ),
               ),
             ),
@@ -158,9 +158,8 @@ class _BuyerScreenState extends State<BuyerScreen> {
   }
 
   Widget _ArticleDescription({
-    required String title,
-    required String subtitle,
-    required String price,
+    required String id,
+    required String name,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,7 +169,7 @@ class _BuyerScreenState extends State<BuyerScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                title,
+                name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -181,21 +180,12 @@ class _BuyerScreenState extends State<BuyerScreen> {
               const Padding(padding: EdgeInsets.only(bottom: .0)),
               const SizedBox(height: 8),
               Text(
-                subtitle,
+                id,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.justify,
                 style: const TextStyle(
                   fontSize: 14.0,
-                  color: Colors.black54,
-                ),
-              ),
-              const Padding(padding: EdgeInsets.only(bottom: .0)),
-              const SizedBox(height: 8),
-              Text(
-                price,
-                style: const TextStyle(
-                  fontSize: 17.0,
                   color: Colors.black54,
                 ),
               ),
@@ -206,13 +196,13 @@ class _BuyerScreenState extends State<BuyerScreen> {
     );
   }
 
-  void _loadServices(int pageNo) {
+  void _loadUsers(int pageNo) {
     curpage = pageNo;
     numofpage ?? 1;
     http
         .get(
       Uri.parse(
-          "${ServerConfig.server}/php/loadallservices.php?search=all&pageno=$pageNo&limit=$limit"),
+          "${ServerConfig.server}/php/loadallverifications.php?search=all&pageno=$pageNo&limit=$limit"),
     )
         .then((response) {
       ProgressDialog progressDialog = ProgressDialog(
@@ -228,26 +218,26 @@ class _BuyerScreenState extends State<BuyerScreen> {
         if (jsondata['status'] == 'success') {
           var extractdata = jsondata['data'];
 
-          if (extractdata['services'] != null) {
+          if (extractdata['users'] != null) {
             numofpage = int.parse(jsondata['numofpage']);
             numberofresult = int.parse(jsondata['numberofresult']);
 
-            serviceList = <Service>[];
-            extractdata['services'].forEach((v) {
-              serviceList.add(Service.fromJson(v));
+            userList = <User>[];
+            extractdata['users'].forEach((v) {
+              userList.add(User.fromJson(v));
             });
             titlecenter = "Found";
           } else {
             titlecenter = "No service Available";
-            serviceList.clear();
+            userList.clear();
           }
         } else {
           titlecenter = "No service Available";
-          serviceList.clear();
+          userList.clear();
         }
       } else {
         titlecenter = "No service Available";
-        serviceList.clear();
+        userList.clear();
       }
       setState(() {
         DefaultCacheManager manager = DefaultCacheManager();
@@ -257,9 +247,21 @@ class _BuyerScreenState extends State<BuyerScreen> {
     });
   }
 
+  Widget searchUser() {
+    return IconButton(onPressed: _gotoSearch, icon: const Icon(Icons.search));
+  }
+
+  void _gotoSearch() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (content) => const SearchUserScreen(
+                  list: 2,
+                )));
+  }
+
   void _showDetails(int index) async {
-    Service service = Service.fromJson(serviceList[index].toJson());
-    loadSingleSeller(index);
+    User user = User.fromJson(userList[index].toJson());
     ProgressDialog progressDialog = ProgressDialog(
       context,
       blur: 5,
@@ -268,40 +270,16 @@ class _BuyerScreenState extends State<BuyerScreen> {
     );
     progressDialog.show();
     Timer(const Duration(seconds: 1), () {
-      if (seller != null) {
-        progressDialog.dismiss();
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (content) => BuyerDetailScreen(
-                      user: widget.user,
-                      service: service,
-                      seller: seller,
-                    )));
-      }
+      progressDialog.dismiss();
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (content) => AdminUserScreen(
+                    user: user,
+                    list: 2,
+                  )));
       progressDialog.dismiss();
     });
-  }
-
-  void loadSingleSeller(int index) {
-    http.post(Uri.parse("${ServerConfig.server}/php/loadseller.php"),
-        body: {"sellerid": serviceList[index].userId}).then((response) {
-      print(response.body);
-      var jsonResponse = json.decode(response.body);
-      if (response.statusCode == 200 && jsonResponse['status'] == "success") {
-        seller = User.fromJson(jsonResponse['data']);
-      }
-    });
-  }
-
-  Widget searchService() {
-    return IconButton(onPressed: _gotoSearch, icon: const Icon(Icons.search));
-  }
-
-  void _gotoSearch() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (content) => SearchScreen(user: widget.user)));
+    setState(() {});
   }
 }

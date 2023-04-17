@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../serverconfig.dart';
 import '../../models/user.dart';
+import 'adminscreen.dart';
 import 'buyerscreen.dart';
 import 'forgotpasswordscreen.dart';
 import 'registerscreen.dart';
@@ -69,6 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextFormField(
                             controller: _emailEditingController,
                             keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
                             validator: (val) => val!.isEmpty ||
                                     !val.contains("@") ||
                                     !val.contains(".")
@@ -183,12 +185,20 @@ class _LoginScreenState extends State<LoginScreen> {
       "password": _pass,
       "login": "login"
     }).then((response) {
+      print(response.body);
       var jsonResponse = json.decode(response.body);
       if (response.statusCode == 200 && jsonResponse['status'] == 'success') {
         User user = User.fromJson(jsonResponse['data']);
-        Navigator.pop(context);
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (content) => BuyerScreen(user: user)));
+        int intId = int.parse(user.id.toString());
+        if (intId >= 1 && intId <= 10) {
+          Navigator.pop(context);
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (content) => AdminScreen(user: user)));
+        } else {
+          Navigator.pop(context);
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (content) => BuyerScreen(user: user)));
+        }
       } else {
         Fluttertoast.showToast(
             msg: "Login Failed",

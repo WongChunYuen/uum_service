@@ -9,22 +9,20 @@ import 'package:ndialog/ndialog.dart';
 import '../../models/service.dart';
 import '../../models/user.dart';
 import '../../serverconfig.dart';
-import '../shared/mainmenu.dart';
-import 'buyerdetailscreen.dart';
+import 'admindetailscreen.dart';
 import 'searchscreen.dart';
 
-class BuyerScreen extends StatefulWidget {
+class ServiceListScreen extends StatefulWidget {
   final User user;
-  const BuyerScreen({super.key, required this.user});
+  const ServiceListScreen({super.key, required this.user});
 
   @override
-  State<BuyerScreen> createState() => _BuyerScreenState();
+  State<ServiceListScreen> createState() => _ServiceListScreenState();
 }
 
-class _BuyerScreenState extends State<BuyerScreen> {
+class _ServiceListScreenState extends State<ServiceListScreen> {
   List<Service> serviceList = <Service>[];
   String titlecenter = "Loading...";
-  late double screenHeight, screenWidth, resWidth;
   var seller;
   var color;
   var numofpage, curpage = 1;
@@ -48,7 +46,7 @@ class _BuyerScreenState extends State<BuyerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("UUM Service"),
+        title: const Text("Service List"),
         actions: [
           searchService(),
         ],
@@ -64,7 +62,7 @@ class _BuyerScreenState extends State<BuyerScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    "Services ($numberofresult found)",
+                    "All services: $numberofresult",
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),
@@ -93,7 +91,6 @@ class _BuyerScreenState extends State<BuyerScreen> {
                 ),
               ],
             ),
-      drawer: MainMenuWidget(user: widget.user),
     );
   }
 
@@ -273,7 +270,7 @@ class _BuyerScreenState extends State<BuyerScreen> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (content) => BuyerDetailScreen(
+                builder: (content) => AdminDetailScreen(
                       user: widget.user,
                       service: service,
                       seller: seller,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../serverconfig.dart';
 import '../../models/user.dart';
+import 'adminscreen.dart';
 import 'buyerscreen.dart';
 import 'package:http/http.dart' as http;
 
@@ -69,15 +70,26 @@ class _SplashScreenState extends State<SplashScreen> {
         print(jsonResponse);
         if (response.statusCode == 200 && jsonResponse['status'] == "success") {
           User user = User.fromJson(jsonResponse['data']);
-          Timer(
-              const Duration(seconds: 3),
-              () => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (content) => BuyerScreen(user: user))));
+          int intId = int.parse(user.id.toString());
+          if (intId >= 1 && intId <= 10) {
+            Timer(
+                const Duration(seconds: 3),
+                () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (content) => AdminScreen(user: user))));
+          } else {
+            Timer(
+                const Duration(seconds: 3),
+                () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (content) => BuyerScreen(user: user))));
+          }
         } else {
           User user = User(
               id: "0",
+              accstatus: "activate",
               email: "unregistered",
               image: "no",
               name: "unregistered",
@@ -96,6 +108,7 @@ class _SplashScreenState extends State<SplashScreen> {
     } else {
       User user = User(
           id: "0",
+          accstatus: "activate",
           email: "unregistered",
           image: "no",
           name: "unregistered",

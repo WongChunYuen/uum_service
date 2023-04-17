@@ -10,6 +10,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../serverconfig.dart';
 import '../../models/user.dart';
+import 'adminscreen.dart';
 import 'buyerscreen.dart';
 
 // Profile screen for the Homestay Raya application
@@ -34,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _dateregEditingController =
       TextEditingController();
   Random random = Random();
-  
+
   @override
   void initState() {
     super.initState();
@@ -48,10 +49,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return WillPopScope(
       onWillPop: () async {
         Navigator.pop(context);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (content) => BuyerScreen(user: widget.user)));
+        int intId = int.parse(widget.user.id.toString());
+        if (intId >= 1 && intId <= 10) {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (content) => AdminScreen(user: widget.user)));
+        } else {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (content) => BuyerScreen(user: widget.user)));
+        }
         return Future.value(false);
       },
       child: Scaffold(
@@ -193,16 +202,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             color: Colors.red, fontSize: 20)),
                                   ],
                                 )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Text("Account Verified ",
-                                        style: TextStyle(
-                                            color: Colors.blue, fontSize: 20)),
-                                    Icon(Icons.verified_rounded,
-                                        color: Colors.blue)
-                                  ],
-                                ),
+                              : _verifyStatus == 'pending'
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: const [
+                                        Text("Pending Verify",
+                                            style: TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 20)),
+                                      ],
+                                    )
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: const [
+                                        Text("Account Verified ",
+                                            style: TextStyle(
+                                                color: Colors.blue,
+                                                fontSize: 20)),
+                                        Icon(Icons.verified_rounded,
+                                            color: Colors.blue)
+                                      ],
+                                    ),
                         )
                       ],
                     ),

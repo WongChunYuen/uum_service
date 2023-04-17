@@ -9,35 +9,28 @@ import 'package:ndialog/ndialog.dart';
 import '../../models/service.dart';
 import '../../models/user.dart';
 import '../../serverconfig.dart';
-import '../shared/mainmenu.dart';
+import 'admindetailscreen.dart';
 import 'buyerdetailscreen.dart';
-import 'searchscreen.dart';
 
-class BuyerScreen extends StatefulWidget {
+class SearchScreen extends StatefulWidget {
   final User user;
-  const BuyerScreen({super.key, required this.user});
+  const SearchScreen({super.key, required this.user});
 
   @override
-  State<BuyerScreen> createState() => _BuyerScreenState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _BuyerScreenState extends State<BuyerScreen> {
+class _SearchScreenState extends State<SearchScreen> {
   List<Service> serviceList = <Service>[];
-  String titlecenter = "Loading...";
+  String titlecenter = "Search something";
   late double screenHeight, screenWidth, resWidth;
+  TextEditingController searchController = TextEditingController();
+  String search = "all";
   var seller;
   var color;
   var numofpage, curpage = 1;
   int numberofresult = 0;
-  int limit = 5;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _loadServices(1);
-    });
-  }
+  int limit = 0;
 
   @override
   void dispose() {
@@ -48,52 +41,81 @@ class _BuyerScreenState extends State<BuyerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("UUM Service"),
-        actions: [
-          searchService(),
-        ],
+        title: Container(
+          color: Colors.white.withOpacity(0.7),
+          child: TextField(
+            autofocus: true,
+            controller: searchController,
+            decoration: InputDecoration(
+              hintText: "Search",
+              border: InputBorder.none,
+              hintStyle: const TextStyle(color: Colors.grey),
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  search = searchController.text;
+                  if (search != "") {
+                    _loadServices(search, 1);
+                  }
+                },
+              ),
+            ),
+            textInputAction: TextInputAction.search,
+            onSubmitted: (value) {
+              search = searchController.text;
+              if (search != "") {
+                _loadServices(search, 1);
+              }
+            },
+          ),
+        ),
       ),
       body: serviceList.isEmpty
           ? Center(
               child: Text(titlecenter,
                   style: const TextStyle(
                       fontSize: 22, fontWeight: FontWeight.bold)))
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "Services ($numberofresult found)",
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
+          : search == 'all'
+              ? const Center(
+                  child: Text("Search something",
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold)))
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "Services ($numberofresult found)",
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Expanded(child: MyStatefulWidget()),
+                    SizedBox(
+                      height: 50,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: numofpage,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          if ((curpage - 1) == index) {
+                            color = Colors.indigoAccent;
+                          } else {
+                            color = Colors.black;
+                          }
+                          return TextButton(
+                              onPressed: () =>
+                                  {_loadServices(search, index + 1)},
+                              child: Text(
+                                (index + 1).toString(),
+                                style: TextStyle(color: color, fontSize: 18),
+                              ));
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(child: MyStatefulWidget()),
-                SizedBox(
-                  height: 50,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: numofpage,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      if ((curpage - 1) == index) {
-                        color = Colors.indigoAccent;
-                      } else {
-                        color = Colors.black;
-                      }
-                      return TextButton(
-                          onPressed: () => {_loadServices(index + 1)},
-                          child: Text(
-                            (index + 1).toString(),
-                            style: TextStyle(color: color, fontSize: 18),
-                          ));
-                    },
-                  ),
-                ),
-              ],
-            ),
-      drawer: MainMenuWidget(user: widget.user),
     );
   }
 
@@ -206,13 +228,13 @@ class _BuyerScreenState extends State<BuyerScreen> {
     );
   }
 
-  void _loadServices(int pageNo) {
+  void _loadServices(String search, int pageNo) {
     curpage = pageNo;
     numofpage ?? 1;
     http
         .get(
       Uri.parse(
-          "${ServerConfig.server}/php/loadallservices.php?search=all&pageno=$pageNo&limit=$limit"),
+          "${ServerConfig.server}/php/loadallservices.php?search=$search&pageno=$pageNo&limit=$limit"),
     )
         .then((response) {
       ProgressDialog progressDialog = ProgressDialog(
@@ -270,14 +292,26 @@ class _BuyerScreenState extends State<BuyerScreen> {
     Timer(const Duration(seconds: 1), () {
       if (seller != null) {
         progressDialog.dismiss();
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (content) => BuyerDetailScreen(
-                      user: widget.user,
-                      service: service,
-                      seller: seller,
-                    )));
+        int intId = int.parse(widget.user.id.toString());
+        if (intId >= 1 && intId <= 10) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (content) => AdminDetailScreen(
+                        user: widget.user,
+                        service: service,
+                        seller: seller,
+                      )));
+        } else {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (content) => BuyerDetailScreen(
+                        user: widget.user,
+                        service: service,
+                        seller: seller,
+                      )));
+        }
       }
       progressDialog.dismiss();
     });
@@ -292,16 +326,5 @@ class _BuyerScreenState extends State<BuyerScreen> {
         seller = User.fromJson(jsonResponse['data']);
       }
     });
-  }
-
-  Widget searchService() {
-    return IconButton(onPressed: _gotoSearch, icon: const Icon(Icons.search));
-  }
-
-  void _gotoSearch() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (content) => SearchScreen(user: widget.user)));
   }
 }

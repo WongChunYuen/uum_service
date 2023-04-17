@@ -1,6 +1,7 @@
 // User object to store user data and pass it over the screen
 class User {
   String? id;
+  String? accstatus;
   String? image;
   String? name;
   String? email;
@@ -11,6 +12,7 @@ class User {
 
   User(
       {required this.id,
+      required this.accstatus,
       required this.image,
       required this.name,
       required this.email,
@@ -21,6 +23,7 @@ class User {
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    accstatus = json['accstatus'];
     image = json['image'];
     name = json['name'];
     email = json['email'];
@@ -33,6 +36,7 @@ class User {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
+    data['accstatus'] = accstatus;
     data['image'] = image;
     data['name'] = name;
     data['email'] = email;

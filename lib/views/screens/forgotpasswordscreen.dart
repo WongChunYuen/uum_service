@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import '../../serverconfig.dart';
+import 'otpscreen.dart';
 import 'resetpasswordscreen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -114,10 +115,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       var jsonResponse = jsonDecode(response.body);
       if (response.statusCode == 200 && jsonResponse['status'] == 'success') {
         print(response.body);
-        Navigator.pushReplacement(
+        Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (content) => ResetPasswordScreen(email: _email)));
+                builder: (content) => OTPScreen(
+                      name: "",
+                      email: _email,
+                      phone: "",
+                      password: "",
+                      screen: "forgotPass",
+                    )));
       } else {
         Fluttertoast.showToast(
             msg: "Email not found",
