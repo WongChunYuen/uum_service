@@ -115,6 +115,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       var jsonResponse = jsonDecode(response.body);
       if (response.statusCode == 200 && jsonResponse['status'] == 'success') {
         print(response.body);
+        _sendOTP(_email);
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -123,7 +124,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       email: _email,
                       phone: "",
                       password: "",
-                      screen: "forgotPass",
+                      screen: "forgot",
                     )));
       } else {
         Fluttertoast.showToast(
@@ -134,5 +135,39 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             fontSize: 14.0);
       }
     });
+  }
+
+  void _sendOTP(String email) {
+    try {
+      http.post(Uri.parse("${ServerConfig.server}/php/send_otp.php"),
+          body: {"email": email, "forgot": "forgot"}).then((response) {
+        var data = jsonDecode(response.body);
+        if (response.statusCode == 200 && data['status'] == "success") {
+          Fluttertoast.showToast(
+              msg: "OTP sent successfully",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              fontSize: 14.0);
+          return;
+        } else {
+          Fluttertoast.showToast(
+              msg: "Fail to sent OTP number",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              fontSize: 14.0);
+          return;
+        }
+      });
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: "Fail to sent OTP number",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          fontSize: 14.0);
+      return;
+    }
   }
 }

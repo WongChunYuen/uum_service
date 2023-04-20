@@ -12,6 +12,7 @@ import '../../serverconfig.dart';
 import '../../models/user.dart';
 import 'adminscreen.dart';
 import 'buyerscreen.dart';
+import 'otpscreen.dart';
 
 // Profile screen for the Homestay Raya application
 class ProfileScreen extends StatefulWidget {
@@ -382,6 +383,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _editNameDialog() {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -412,6 +414,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
+                    setState(() {
+                      _nameEditingController.text = '${widget.user.name}';
+                    });
                   },
                 ),
               ],
@@ -447,12 +452,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             fontSize: 16.0);
+        setState(() {
+          _nameEditingController.text = '${widget.user.name}';
+        });
       }
     });
   }
 
   void _editEmailDialog() {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -472,8 +481,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
-                    Navigator.of(context).pop();
-                    // Edit method
+                    String newEmail = _emailEditingController.text;
+                    _otpDialog(newEmail);
                   },
                 ),
                 TextButton(
@@ -483,6 +492,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
+                    setState(() {
+                      _emailEditingController.text = '${widget.user.email}';
+                    });
                   },
                 ),
               ],
@@ -493,8 +505,144 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _otpDialog(String email) {
+    http.post(Uri.parse("${ServerConfig.server}/php/forgot_password.php"),
+        body: {"email": email, "submit": "submit"}).then((response) {
+      var jsonResponse = jsonDecode(response.body);
+      if (response.statusCode == 200 && jsonResponse['status'] == 'success') {
+        Fluttertoast.showToast(
+            msg: "Email have been registered",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
+        setState(() {
+          _emailEditingController.text = '${widget.user.email}';
+        });
+        return;
+      } else {
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              title: const Text(
+                "Verify your email",
+                textAlign: TextAlign.center,
+              ),
+              content: const Text(
+                "The OTP number will send to your email address",
+                textAlign: TextAlign.center,
+              ),
+              actions: <Widget>[
+                Center(
+                  child: TextButton(
+                    child: const Text(
+                      "Sure",
+                      style: TextStyle(),
+                    ),
+                    onPressed: () async {
+                      _sendOTP(email);
+                      Navigator.of(context).pop();
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (content) => OTPScreen(
+                                    name: "",
+                                    email: email,
+                                    phone: "",
+                                    password: "",
+                                    screen: "update",
+                                  )));
+                      if (result == 'valid') {
+                        _updateEmail(email);
+                      } else {
+                        setState(() {
+                          _emailEditingController.text = '${widget.user.email}';
+                        });
+                      }
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    });
+  }
+
+  void _sendOTP(String email) {
+    try {
+      http.post(Uri.parse("${ServerConfig.server}/php/send_otp.php"),
+          body: {"email": email, "update": "update"}).then((response) {
+        var data = jsonDecode(response.body);
+        if (response.statusCode == 200 && data['status'] == "success") {
+          Fluttertoast.showToast(
+              msg: "OTP sent successfully",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              fontSize: 14.0);
+          return;
+        } else {
+          Fluttertoast.showToast(
+              msg: "Fail to sent OTP number",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              fontSize: 14.0);
+          return;
+        }
+      });
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: "Fail to sent OTP number",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          fontSize: 14.0);
+      return;
+    }
+  }
+
+  void _updateEmail(String newemail) {
+    http.post(Uri.parse("${ServerConfig.server}/php/update_profile.php"),
+        body: {
+          "userid": widget.user.id,
+          "newemail": newemail,
+        }).then((response) {
+      print(response.body);
+      var jsondata = jsonDecode(response.body);
+      if (response.statusCode == 200 && jsondata['status'] == 'success') {
+        Fluttertoast.showToast(
+            msg: "Success",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 16.0);
+        setState(() {
+          widget.user.email = newemail;
+        });
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 16.0);
+        setState(() {
+          _emailEditingController.text = '${widget.user.email}';
+        });
+      }
+    });
+  }
+
   void _editPhoneDialog() {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -526,6 +674,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
+                    setState(() {
+                      _phoneEditingController.text = '${widget.user.phone}';
+                    });
                   },
                 ),
               ],
@@ -561,12 +712,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             fontSize: 16.0);
+        setState(() {
+          _phoneEditingController.text = '${widget.user.phone}';
+        });
       }
     });
   }
 
   void _editAddressDialog() {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -597,6 +752,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
+                    setState(() {
+                      _addressEditingController.text = '${widget.user.address}';
+                    });
                   },
                 ),
               ],
@@ -632,6 +790,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             fontSize: 16.0);
+        setState(() {
+          _addressEditingController.text = '${widget.user.address}';
+        });
       }
     });
   }

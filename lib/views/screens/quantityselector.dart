@@ -4,7 +4,8 @@ class QuantitySelector extends StatefulWidget {
   final int initialValue;
   final Function(int) onValueChanged;
 
-  QuantitySelector({required this.initialValue, required this.onValueChanged});
+  const QuantitySelector(
+      {super.key, required this.initialValue, required this.onValueChanged});
 
   @override
   _QuantitySelectorState createState() => _QuantitySelectorState();
@@ -28,7 +29,7 @@ class _QuantitySelectorState extends State<QuantitySelector> {
 
   void _decrementValue() {
     setState(() {
-      if (_value > 0) {
+      if (_value > 1) {
         _value--;
         widget.onValueChanged(_value);
       }
@@ -46,7 +47,7 @@ class _QuantitySelectorState extends State<QuantitySelector> {
             borderRadius: BorderRadius.circular(5),
           ),
           child: IconButton(
-            icon: Icon(Icons.remove),
+            icon: const Icon(Icons.remove),
             onPressed: _decrementValue,
           ),
         ),
@@ -60,7 +61,7 @@ class _QuantitySelectorState extends State<QuantitySelector> {
             borderRadius: BorderRadius.circular(5),
           ),
           child: IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: _incrementValue,
           ),
         ),

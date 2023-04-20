@@ -1,13 +1,9 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import '../../models/user.dart';
 import '../../serverconfig.dart';
 import '../screens/buyerscreen.dart';
 import '../screens/loginscreen.dart';
-import '../screens/otpscreen.dart';
 import '../screens/profilescreen.dart';
 import '../screens/sellerscreeen.dart';
 import 'EnterExitRoute.dart';
@@ -63,54 +59,22 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
                     enterPage: const LoginScreen()));
           },
         ),
-        ListTile(
-          leading: const Icon(Icons.help_outline),
-          title: const Text('Help Center'),
-          onTap: () {
-            Navigator.pop(context);
-            Navigator.push(
-                context,
-                EnterExitRoute(
-                    exitPage: BuyerScreen(user: widget.user),
-                    enterPage: const OTPScreen(
-                      name: "name",
-                      email: "yuenwong00821@gmail.com",
-                      phone: "phone",
-                      password: "pass",
-                      screen: "register",
-                    )));
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (content) => const ProfileScreen()));
-            // Navigator.push(
-            //     context,
-            //     EnterExitRoute(
-            //         exitPage: BuyerScreen(user: widget.user),
-            //         enterPage: ProfileScreen(
-            //           user: widget.user,
-            //         )));
-          },
-        ),
-        ListTile(
-          leading: const Icon(Icons.settings_outlined),
-          title: const Text('Setting'),
-          onTap: () {
-            _sendOTP();
-            Navigator.pop(context);
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (content) => const ProfileScreen()));
-            // Navigator.push(
-            //     context,
-            //     EnterExitRoute(
-            //         exitPage: BuyerScreen(user: widget.user),
-            //         enterPage: ProfileScreen(
-            //           user: widget.user,
-            //         )));
-          },
-        ),
+        // ListTile(
+        //   leading: const Icon(Icons.help_outline),
+        //   title: const Text('Help Center'),
+        //   onTap: () {
+        //     Navigator.pop(context);
+
+        //   },
+        // ),
+        // ListTile(
+        //   leading: const Icon(Icons.settings_outlined),
+        //   title: const Text('Setting'),
+        //   onTap: () {
+        //     Navigator.pop(context);
+
+        //   },
+        // ),
       ]);
     }
     if (intId >= 1 && intId <= 10) {
@@ -159,42 +123,20 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
                       enterPage: ProfileScreen(user: widget.user)));
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.help_outline),
-            title: const Text('Help Center'),
-            onTap: () {
-              Navigator.pop(context);
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (content) => const ProfileScreen()));
-              // Navigator.push(
-              //     context,
-              //     EnterExitRoute(
-              //         exitPage: BuyerScreen(user: widget.user),
-              //         enterPage: ProfileScreen(
-              //           user: widget.user,
-              //         )));
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings_outlined),
-            title: const Text('Setting'),
-            onTap: () {
-              Navigator.pop(context);
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (content) => const ProfileScreen()));
-              // Navigator.push(
-              //     context,
-              //     EnterExitRoute(
-              //         exitPage: BuyerScreen(user: widget.user),
-              //         enterPage: ProfileScreen(
-              //           user: widget.user,
-              //         )));
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.help_outline),
+          //   title: const Text('Help Center'),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
+          // ListTile(
+          //   leading: const Icon(Icons.settings_outlined),
+          //   title: const Text('Setting'),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Log out'),
@@ -321,16 +263,6 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
                         exitPage: BuyerScreen(user: widget.user),
                         enterPage: SellerScreen(user: widget.user)));
               }
-
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (content) => const SellerScreen()));
-              // Navigator.push(
-              //     context,
-              //     EnterExitRoute(
-              //         exitPage: BuyerScreen(user: widget.user),
-              //         enterPage: SellerScreen(user: widget.user)));
             },
           ),
           ListTile(
@@ -338,17 +270,6 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
             title: const Text('Order List'),
             onTap: () {
               Navigator.pop(context);
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (content) => const ProfileScreen()));
-              // Navigator.push(
-              //     context,
-              //     EnterExitRoute(
-              //         exitPage: BuyerScreen(user: widget.user),
-              //         enterPage: ProfileScreen(
-              //           user: widget.user,
-              //         )));
             },
           ),
           ListTile(
@@ -356,55 +277,22 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
             title: const Text('Order History'),
             onTap: () {
               Navigator.pop(context);
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (content) => const ProfileScreen()));
-              // Navigator.push(
-              //     context,
-              //     EnterExitRoute(
-              //         exitPage: BuyerScreen(user: widget.user),
-              //         enterPage: ProfileScreen(
-              //           user: widget.user,
-              //         )));
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.help_outline),
-            title: const Text('Help Center'),
-            onTap: () {
-              Navigator.pop(context);
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (content) => const ProfileScreen()));
-              // Navigator.push(
-              //     context,
-              //     EnterExitRoute(
-              //         exitPage: BuyerScreen(user: widget.user),
-              //         enterPage: ProfileScreen(
-              //           user: widget.user,
-              //         )));
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings_outlined),
-            title: const Text('Setting'),
-            onTap: () {
-              Navigator.pop(context);
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (content) => const ProfileScreen()));
-              // Navigator.push(
-              //     context,
-              //     EnterExitRoute(
-              //         exitPage: BuyerScreen(user: widget.user),
-              //         enterPage: ProfileScreen(
-              //           user: widget.user,
-              //         )));
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.help_outline),
+          //   title: const Text('Help Center'),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
+          // ListTile(
+          //   leading: const Icon(Icons.settings_outlined),
+          //   title: const Text('Setting'),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Log out'),
@@ -431,39 +319,5 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
         regdate: "0");
     Navigator.pushReplacement(context,
         MaterialPageRoute(builder: (content) => BuyerScreen(user: user)));
-  }
-
-  void _sendOTP() {
-    try {
-      http.post(Uri.parse("${ServerConfig.server}/php/send_otp.php"),
-          body: {"email": "email"}).then((response) {
-        var data = jsonDecode(response.body);
-        if (response.statusCode == 200 && data['status'] == "success") {
-          Fluttertoast.showToast(
-              msg: "OTP sent successfully",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              fontSize: 14.0);
-          return;
-        } else {
-          Fluttertoast.showToast(
-              msg: "Fail to sent OTP number",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              fontSize: 14.0);
-          return;
-        }
-      });
-    } catch (e) {
-      Fluttertoast.showToast(
-          msg: "Fail to sent OTP number",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          fontSize: 14.0);
-      return;
-    }
   }
 }

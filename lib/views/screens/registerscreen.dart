@@ -408,7 +408,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _sendOTP(String email) {
     try {
       http.post(Uri.parse("${ServerConfig.server}/php/send_otp.php"),
-          body: {"email": email}).then((response) {
+          body: {"email": email, "register": "register"}).then((response) {
         var data = jsonDecode(response.body);
         if (response.statusCode == 200 && data['status'] == "success") {
           Fluttertoast.showToast(
