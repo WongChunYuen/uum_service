@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
-import '../../models/service.dart';
+import '../../models/shop.dart';
 import '../../models/user.dart';
 import '../../serverconfig.dart';
 import 'detailscreen.dart';
-import 'newservicescreen.dart';
+import 'newshopscreen.dart';
 
 class SellerScreen extends StatefulWidget {
   final User user;
@@ -19,19 +19,19 @@ class SellerScreen extends StatefulWidget {
 }
 
 class _SellerScreenState extends State<SellerScreen> {
-  List<Service> serviceList = <Service>[];
+  List<Shop> shopList = <Shop>[];
   String titlecenter = "Loading...";
   late double screenHeight, screenWidth, resWidth;
   int rowcount = 2;
 
   Future refresh() async {
-    _loadServices();
+    _loadShops();
   }
 
   @override
   void initState() {
     super.initState();
-    _loadServices();
+    _loadShops();
   }
 
   @override
@@ -51,12 +51,12 @@ class _SellerScreenState extends State<SellerScreen> {
       rowcount = 3;
     }
     return Scaffold(
-      appBar: AppBar(title: const Text("My Services"), actions: [
+      appBar: AppBar(title: const Text("My Shops"), actions: [
         PopupMenuButton(itemBuilder: (context) {
           return [
             const PopupMenuItem<int>(
               value: 0,
-              child: Text("New Service"),
+              child: Text("New Shop"),
             ),
             const PopupMenuItem<int>(
               value: 1,
@@ -65,13 +65,13 @@ class _SellerScreenState extends State<SellerScreen> {
           ];
         }, onSelected: (value) {
           if (value == 0) {
-            _gotoNewService();
+            _createNewShop();
           } else if (value == 1) {
             // Show order list
           }
         }),
       ]),
-      body: serviceList.isEmpty
+      body: shopList.isEmpty
           ? Center(
               child: Text(titlecenter,
                   style: const TextStyle(
@@ -82,14 +82,14 @@ class _SellerScreenState extends State<SellerScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    "Your current service (${serviceList.length} found)",
+                    "Your current shop (${shopList.length} found)",
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Expanded(
                     child: RefreshIndicator(
-                        onRefresh: refresh, child: MyStatefulWidget())),
+                        onRefresh: refresh, child: myStatefulWidget())),
               ],
             ),
       floatingActionButton: Align(
@@ -98,7 +98,7 @@ class _SellerScreenState extends State<SellerScreen> {
           padding: const EdgeInsets.only(bottom: 16),
           child: FloatingActionButton(
             onPressed: () {
-              _gotoNewService();
+              _createNewShop();
             },
             child: const Icon(Icons.add),
           ),
@@ -108,37 +108,34 @@ class _SellerScreenState extends State<SellerScreen> {
     );
   }
 
-  Widget MyStatefulWidget() {
+  Widget myStatefulWidget() {
     return ListView.builder(
       padding: const EdgeInsets.all(10.0),
-      itemCount: serviceList.length,
+      itemCount: shopList.length,
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () {
             _showDetails(index);
           },
-          child: CustomListItemTwo(
+          child: customListItemTwo(
               thumbnail: CachedNetworkImage(
                 imageUrl:
-                    "${ServerConfig.server}/assets/serviceimages/${serviceList[index].serviceId}_1.png",
+                    "${ServerConfig.server}/assets/serviceimages/${shopList[index].shopId}_1.png",
                 placeholder: (context, url) => const LinearProgressIndicator(),
                 errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
-              title: serviceList[index].serviceName.toString(),
-              subtitle: serviceList[index].serviceDesc.toString(),
-              price:
-                  "RM ${double.parse(serviceList[index].servicePrice.toString()).toStringAsFixed(2)}",
+              title: shopList[index].shopName.toString(),
+              subtitle: shopList[index].shopDesc.toString(),
               index: index),
         );
       },
     );
   }
 
-  Widget CustomListItemTwo({
+  Widget customListItemTwo({
     required Widget thumbnail,
     required String title,
     required String subtitle,
-    required String price,
     required int index,
   }) {
     return Padding(
@@ -155,10 +152,9 @@ class _SellerScreenState extends State<SellerScreen> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20.0, 0.0, 2.0, 0.0),
-                child: _ArticleDescription(
+                child: _articleDescription(
                   title: title,
                   subtitle: subtitle,
-                  price: price,
                 ),
               ),
             ),
@@ -176,7 +172,7 @@ class _SellerScreenState extends State<SellerScreen> {
               },
               child: const Icon(
                 Icons.more_vert,
-                size: 20.0,
+                size: 25.0,
               ),
             ),
           ],
@@ -185,10 +181,9 @@ class _SellerScreenState extends State<SellerScreen> {
     );
   }
 
-  Widget _ArticleDescription({
+  Widget _articleDescription({
     required String title,
     required String subtitle,
-    required String price,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,13 +215,6 @@ class _SellerScreenState extends State<SellerScreen> {
               ),
               const Padding(padding: EdgeInsets.only(bottom: .0)),
               const SizedBox(height: 8),
-              Text(
-                price,
-                style: const TextStyle(
-                  fontSize: 17.0,
-                  color: Colors.black54,
-                ),
-              ),
             ],
           ),
         ),
@@ -243,41 +231,40 @@ class _SellerScreenState extends State<SellerScreen> {
     }
   }
 
-  void _gotoNewService() async {
+  void _createNewShop() async {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (content) => NewServiceScreen(
+            builder: (content) => NewShopScreen(
                   user: widget.user,
                 )));
-    _loadServices();
+    _loadShops();
   }
 
-  void _loadServices() {
+  void _loadShops() {
     http
         .get(
       Uri.parse(
-          "${ServerConfig.server}/php/load_service.php?userid=${widget.user.id}"),
+          "${ServerConfig.server}/php/load_shop.php?userid=${widget.user.id}"),
     )
         .then((response) {
-      var jsondata = jsonDecode(response.body);
-      if (response.statusCode == 200 && jsondata['status'] == 'success') {
+      if (response.statusCode == 200) {
         var jsondata = jsonDecode(response.body);
         if (jsondata['status'] == 'success') {
           var extractdata = jsondata['data'];
-          if (extractdata['services'] != null) {
-            serviceList = <Service>[];
-            extractdata['services'].forEach((v) {
-              serviceList.add(Service.fromJson(v));
+          if (extractdata['shops'] != null) {
+            shopList = <Shop>[];
+            extractdata['shops'].forEach((v) {
+              shopList.add(Shop.fromJson(v));
             });
             titlecenter = "Found";
           } else {
-            titlecenter = "No Service Available";
-            serviceList.clear();
+            titlecenter = "No Shop Available";
+            shopList.clear();
           }
         } else {
-          titlecenter = "No Service Available";
-          serviceList.clear();
+          titlecenter = "No Shop Available";
+          shopList.clear();
         }
       }
       setState(() {
@@ -288,16 +275,16 @@ class _SellerScreenState extends State<SellerScreen> {
   }
 
   Future<void> _showDetails(int index) async {
-    Service service = Service.fromJson(serviceList[index].toJson());
+    Shop shop = Shop.fromJson(shopList[index].toJson());
 
     await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (content) => DetailsScreen(
-                  service: service,
+                  shop: shop,
                   user: widget.user,
                 )));
-    _loadServices();
+    _loadShops();
   }
 
   void _deleteDialog(int index) {
@@ -308,7 +295,7 @@ class _SellerScreenState extends State<SellerScreen> {
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           title: Text(
-            "Delete ${truncateString(serviceList[index].serviceName.toString(), 15)}",
+            "Delete ${truncateString(shopList[index].shopName.toString(), 15)}",
             textAlign: TextAlign.center,
           ),
           content: const Text("Are you sure?", textAlign: TextAlign.center),
@@ -323,7 +310,7 @@ class _SellerScreenState extends State<SellerScreen> {
                   ),
                   onPressed: () async {
                     Navigator.of(context).pop();
-                    _deleteService(index);
+                    _deleteShop(index);
                   },
                 ),
                 TextButton(
@@ -343,11 +330,11 @@ class _SellerScreenState extends State<SellerScreen> {
     );
   }
 
-  void _deleteService(index) {
+  void _deleteShop(index) {
     try {
-      http.post(Uri.parse("${ServerConfig.server}/php/delete_service.php"),
+      http.post(Uri.parse("${ServerConfig.server}/php/delete_shop.php"),
           body: {
-            "serviceid": serviceList[index].serviceId,
+            "shopid": shopList[index].shopId,
           }).then((response) {
         var data = jsonDecode(response.body);
         if (response.statusCode == 200 && data['status'] == "success") {
@@ -357,7 +344,7 @@ class _SellerScreenState extends State<SellerScreen> {
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 1,
               fontSize: 14.0);
-          _loadServices();
+          _loadShops();
           return;
         } else {
           Fluttertoast.showToast(

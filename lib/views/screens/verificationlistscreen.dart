@@ -20,7 +20,9 @@ class VerificationListScreen extends StatefulWidget {
 class _VerificationListScreenState extends State<VerificationListScreen> {
   List<User> userList = <User>[];
   String titlecenter = "Loading...";
+  // ignore: prefer_typing_uninitialized_variables
   var color;
+  // ignore: prefer_typing_uninitialized_variables
   var numofpage, curpage = 1;
   int numberofresult = 0;
   int limit = 10;
@@ -58,7 +60,7 @@ class _VerificationListScreenState extends State<VerificationListScreen> {
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
-                Expanded(child: MyStatefulWidget()),
+                Expanded(child: myStatefulWidget()),
                 SizedBox(
                   height: 50,
                   child: ListView.builder(
@@ -85,7 +87,7 @@ class _VerificationListScreenState extends State<VerificationListScreen> {
     );
   }
 
-  Widget MyStatefulWidget() {
+  Widget myStatefulWidget() {
     return ListView.builder(
       padding: const EdgeInsets.all(10.0),
       itemCount: userList.length,
@@ -95,7 +97,7 @@ class _VerificationListScreenState extends State<VerificationListScreen> {
             _showDetails(index);
           },
           child: userList[index].image == "no"
-              ? CustomListItemTwo(
+              ? customListItemTwo(
                   thumbnail: ClipOval(
                     child: Image.asset(
                       "assets/images/profile.png",
@@ -106,7 +108,7 @@ class _VerificationListScreenState extends State<VerificationListScreen> {
                   id: "ID: ${userList[index].id}",
                   name: userList[index].name.toString(),
                   index: index)
-              : CustomListItemTwo(
+              : customListItemTwo(
                   thumbnail: ClipOval(
                     child: CachedNetworkImage(
                       imageUrl:
@@ -125,7 +127,7 @@ class _VerificationListScreenState extends State<VerificationListScreen> {
     );
   }
 
-  Widget CustomListItemTwo({
+  Widget customListItemTwo({
     required Widget thumbnail,
     required String id,
     required String name,
@@ -145,7 +147,7 @@ class _VerificationListScreenState extends State<VerificationListScreen> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20.0, 0.0, 2.0, 0.0),
-                child: _ArticleDescription(
+                child: _articleDescription(
                   id: id,
                   name: name,
                 ),
@@ -157,7 +159,7 @@ class _VerificationListScreenState extends State<VerificationListScreen> {
     );
   }
 
-  Widget _ArticleDescription({
+  Widget _articleDescription({
     required String id,
     required String name,
   }) {

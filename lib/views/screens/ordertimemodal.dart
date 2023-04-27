@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
-
-import 'quantityselector.dart';
 
 class OrderTimeModal extends StatefulWidget {
   const OrderTimeModal({super.key, superkey});
@@ -12,8 +9,8 @@ class OrderTimeModal extends StatefulWidget {
 }
 
 class _OrderTimeModalState extends State<OrderTimeModal> {
-  List<String> _options = ['Tng ewallet', 'COD'];
-  List<String> _time = ['10-11', 'COD'];
+  final List<String> _options = ['Tng ewallet', 'COD'];
+  final List<String> _time = ['now', 'after 10 mins', 'after 20 mins', 'after 30 mins'];
   String _selectedOption = '', _selectedOptionA = '';
   bool areOptionsSelected = false;
   bool areOptionsSelectedA = false;
@@ -32,7 +29,7 @@ class _OrderTimeModalState extends State<OrderTimeModal> {
         ),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Container(
+          child: SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

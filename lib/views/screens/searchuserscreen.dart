@@ -88,7 +88,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    Expanded(child: MyStatefulWidget()),
+                    Expanded(child: myStatefulWidget()),
                     SizedBox(
                       height: 50,
                       child: ListView.builder(
@@ -115,7 +115,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
     );
   }
 
-  Widget MyStatefulWidget() {
+  Widget myStatefulWidget() {
     return ListView.builder(
       padding: const EdgeInsets.all(10.0),
       itemCount: userList.length,
@@ -125,7 +125,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
             _showDetails(index);
           },
           child: userList[index].image == "no"
-              ? CustomListItemTwo(
+              ? customListItemTwo(
                   thumbnail: ClipOval(
                     child: Image.asset(
                       "assets/images/profile.png",
@@ -136,7 +136,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                   id: "ID: ${userList[index].id}",
                   name: userList[index].name.toString(),
                   index: index)
-              : CustomListItemTwo(
+              : customListItemTwo(
                   thumbnail: ClipOval(
                     child: CachedNetworkImage(
                       imageUrl:
@@ -155,7 +155,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
     );
   }
 
-  Widget CustomListItemTwo({
+  Widget customListItemTwo({
     required Widget thumbnail,
     required String id,
     required String name,
@@ -175,7 +175,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20.0, 0.0, 2.0, 0.0),
-                child: _ArticleDescription(
+                child: _articleDescription(
                   id: id,
                   name: name,
                 ),
@@ -187,7 +187,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
     );
   }
 
-  Widget _ArticleDescription({
+  Widget _articleDescription({
     required String id,
     required String name,
   }) {

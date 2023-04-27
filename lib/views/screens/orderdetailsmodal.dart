@@ -1,25 +1,35 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
-import 'package:uum_service/views/screens/orderdetailsmodal.dart';
-
+import '../../models/service.dart';
+import '../../serverconfig.dart';
 import 'ordertimemodal.dart';
 import 'quantityselector.dart';
+import 'package:http/http.dart' as http;
 
 class OrderDetailsModal extends StatefulWidget {
-  const OrderDetailsModal({super.key, superkey});
+  final String shopid;
+  const OrderDetailsModal({Key? key, required this.shopid}) : super(key: key);
 
   @override
   State<OrderDetailsModal> createState() => _OrderDetailsModalState();
 }
 
 class _OrderDetailsModalState extends State<OrderDetailsModal> {
-  List<String> _options = ['Option A', 'Option B', 'option C'];
-  List<String> _optionsA = ['Option AA', 'Option AB', 'option AC', 'win'];
-  String _selectedOption = '', _selectedOptionA = '';
+  List<Service> serviceList = <Service>[];
+  List<String> _serviceName = [];
+  List<String> _servicePrice = [];
+  int index = -1;
+  String _selectedOption = '', _selectedOptionA = '', serviceTitle = '';
   bool areOptionsSelected = false;
   bool areOptionsSelectedA = false;
   late double screenHeight, screenWidth;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadServices();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,82 +42,92 @@ class _OrderDetailsModalState extends State<OrderDetailsModal> {
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Container(
+          child: SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 16,),
+                const SizedBox(
+                  height: 16,
+                ),
                 const Text(
-                  'Select an option',
+                  'Product',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: _options.map((option) {
-                      return Row(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                _selectedOption = option;
-                                areOptionsSelected = true;
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: _selectedOption == option
-                                      ? Colors.green
-                                      : Colors.grey,
-                                  width: 1,
-                                ),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              child: Row(
-                                children: [
-                                  Text(option),
-                                  const SizedBox(width: 4),
-                                  Container(
+                serviceTitle == 'No'
+                    ? const Text(
+                        'No services yet',
+                        style: TextStyle(
+                          fontSize: 24,
+                        ),
+                      )
+                    : SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: _serviceName.map((option) {
+                            return Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedOption = option;
+                                      areOptionsSelected = true;
+                                      findServicePrice();
+                                    });
+                                  },
+                                  child: Container(
                                     decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
+                                      borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
                                         color: _selectedOption == option
                                             ? Colors.green
-                                            : Colors.transparent,
+                                            : Colors.grey,
                                         width: 1,
                                       ),
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(2),
-                                      child: _selectedOption == option
-                                          ? const Icon(
-                                              Icons.check,
-                                              size: 16,
-                                              color: Colors.green,
-                                            )
-                                          : null,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Text(option),
+                                        const SizedBox(width: 4),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: _selectedOption == option
+                                                  ? Colors.green
+                                                  : Colors.transparent,
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(2),
+                                            child: _selectedOption == option
+                                                ? const Icon(
+                                                    Icons.check,
+                                                    size: 16,
+                                                    color: Colors.green,
+                                                  )
+                                                : null,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                ),
+                                ),
+                                const SizedBox(width: 8),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                      ),
                 const SizedBox(height: 8),
                 const Divider(
                   color: Colors.grey,
@@ -116,75 +136,26 @@ class _OrderDetailsModalState extends State<OrderDetailsModal> {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Select a new optionA',
+                  'Price',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: _optionsA.map((option) {
-                      return Row(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                _selectedOptionA = option;
-                                areOptionsSelectedA = true;
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: _selectedOptionA == option
-                                      ? Colors.green
-                                      : Colors.grey,
-                                  width: 1,
-                                ),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              child: Row(
-                                children: [
-                                  Text(option),
-                                  const SizedBox(width: 4),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: _selectedOptionA == option
-                                            ? Colors.green
-                                            : Colors.transparent,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(2),
-                                      child: _selectedOptionA == option
-                                          ? const Icon(
-                                              Icons.check,
-                                              size: 16,
-                                              color: Colors.green,
-                                            )
-                                          : null,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                ),
+                _selectedOption == ''
+                    ? const Text(
+                        'RM -',
+                        style: TextStyle(
+                          fontSize: 24,
+                        ),
+                      )
+                    : Text(
+                        'RM ${_servicePrice[index]}',
+                        style: const TextStyle(
+                          fontSize: 24,
+                        ),
+                      ),
                 const SizedBox(height: 8),
                 const Divider(
                   color: Colors.grey,
@@ -218,7 +189,9 @@ class _OrderDetailsModalState extends State<OrderDetailsModal> {
                   height: 50,
                   elevation: 10,
                   onPressed: () {
-                    if (areOptionsSelected && areOptionsSelectedA) {
+                    if (areOptionsSelected
+                        // && areOptionsSelectedA
+                        ) {
                       // Perform the purchase
                       _orderService();
                     } else {
@@ -244,7 +217,51 @@ class _OrderDetailsModalState extends State<OrderDetailsModal> {
     );
   }
 
+  void _loadServices() {
+    http
+        .get(
+      Uri.parse(
+          "${ServerConfig.server}/php/load_service.php?shopid=${widget.shopid}"),
+    )
+        .then((response) {
+      print(response.body);
+      if (response.statusCode == 200) {
+        var jsondata = jsonDecode(response.body);
+        if (jsondata['status'] == 'success') {
+          var extractdata = jsondata['data'];
+          if (extractdata['services'] != null) {
+            serviceList = <Service>[];
+            extractdata['services'].forEach((v) {
+              serviceList.add(Service.fromJson(v));
+            });
+            serviceTitle = "Found";
+            serviceArray();
+          } else {
+            serviceTitle = "No";
+            serviceList.clear();
+          }
+        } else {
+          serviceTitle = "No";
+          serviceList.clear();
+        }
+      }
+      setState(() {});
+    });
+  }
+
+  void serviceArray() {
+    for (int i = 0; i < serviceList.length; i++) {
+      _serviceName.add(serviceList[i].serviceName.toString());
+      _servicePrice.add(serviceList[i].servicePrice.toString());
+    }
+  }
+
+  void findServicePrice() {
+    index = _serviceName.indexOf(_selectedOption);
+  }
+
   void _orderService() {
+    print(_selectedOption);
     Navigator.pop(context);
     showModalBottomSheet(
       context: context,

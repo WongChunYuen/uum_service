@@ -8,17 +8,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import '../../models/service.dart';
+import '../../models/shop.dart';
 import '../../serverconfig.dart';
 import '../../models/user.dart';
+import 'shopservice.dart';
 
 class DetailsScreen extends StatefulWidget {
-  final Service service;
+  final Shop shop;
   final User user;
   const DetailsScreen({
     Key? key,
     required this.user,
-    required this.service,
+    required this.shop,
   }) : super(key: key);
 
   @override
@@ -28,8 +29,6 @@ class DetailsScreen extends StatefulWidget {
 class _DetailsScreenState extends State<DetailsScreen> {
   final TextEditingController _snameEditingController = TextEditingController();
   final TextEditingController _sdescEditingController = TextEditingController();
-  final TextEditingController _spriceEditingController =
-      TextEditingController();
   final TextEditingController _saddrEditingController = TextEditingController();
   final TextEditingController _sbankaccEditingController =
       TextEditingController();
@@ -66,7 +65,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
       resWidth = screenWidth * 0.90;
     }
     return Scaffold(
-        appBar: AppBar(title: const Text("Service Details"), actions: [
+        appBar: AppBar(title: const Text("Shop Details"), actions: [
           PopupMenuButton(itemBuilder: (context) {
             return [
               const PopupMenuItem<int>(
@@ -159,14 +158,14 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: _editKey
                         ? const Text(
-                            "Edit Service Details",
+                            "Edit Shop Details",
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
                             ),
                           )
                         : const Text(
-                            "Service Details",
+                            "Shop Details",
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
@@ -178,11 +177,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       textInputAction: TextInputAction.next,
                       controller: _snameEditingController,
                       validator: (val) => val!.isEmpty || (val.length < 4)
-                          ? "Service name must be longer than 3"
+                          ? "Shop name must be longer than 3"
                           : null,
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
-                          labelText: 'Service Name',
+                          labelText: 'Shop Name',
                           labelStyle: TextStyle(),
                           icon: Icon(Icons.home),
                           focusedBorder: OutlineInputBorder(
@@ -193,12 +192,12 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       textInputAction: TextInputAction.next,
                       controller: _sdescEditingController,
                       validator: (val) => val!.isEmpty || (val.length < 10)
-                          ? "Service description must be longer than 10"
+                          ? "Shop description must be longer than 10"
                           : null,
                       maxLines: 4,
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
-                          labelText: 'Service Description',
+                          labelText: 'Shop Description',
                           alignLabelWithHint: true,
                           labelStyle: TextStyle(),
                           icon: Icon(
@@ -207,20 +206,20 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
-                  TextFormField(
-                      enabled: _editKey,
-                      textInputAction: TextInputAction.next,
-                      controller: _spriceEditingController,
-                      validator: (val) =>
-                          val!.isEmpty ? "Please enter service price" : null,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                          labelText: 'Service Price/days',
-                          labelStyle: TextStyle(),
-                          icon: Icon(Icons.attach_money),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(width: 2.0),
-                          ))),
+                  // TextFormField(
+                  //     enabled: _editKey,
+                  //     textInputAction: TextInputAction.next,
+                  //     controller: _spriceEditingController,
+                  //     validator: (val) =>
+                  //         val!.isEmpty ? "Please enter shop price" : null,
+                  //     keyboardType: TextInputType.number,
+                  //     decoration: const InputDecoration(
+                  //         labelText: 'Service Price/days',
+                  //         labelStyle: TextStyle(),
+                  //         icon: Icon(Icons.attach_money),
+                  //         focusedBorder: OutlineInputBorder(
+                  //           borderSide: BorderSide(width: 2.0),
+                  //         ))),
                   _editKey
                       ? DropdownButtonFormField(
                           value: selectBank,
@@ -280,17 +279,17 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       textInputAction: TextInputAction.next,
                       controller: _saddrEditingController,
                       validator: (val) =>
-                          val!.isEmpty ? "Please enter service address" : null,
+                          val!.isEmpty ? "Please enter shop address" : null,
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
-                          labelText: 'Service Address',
+                          labelText: 'Shop Address',
                           labelStyle: TextStyle(),
                           icon: Icon(Icons.place),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
                   const SizedBox(
-                    height: 16,
+                    height: 12,
                   ),
                   Container(
                     child: _editKey
@@ -306,7 +305,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                     style: TextStyle(fontSize: 20),
                                   ),
                                   onPressed: () => {
-                                    _updateServiceDialog(),
+                                    _updateShopDialog(),
                                   },
                                 ),
                               ),
@@ -329,16 +328,36 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               ),
                             ],
                           )
-                        : null,
+                        : Align(
+                            alignment: FractionalOffset.bottomCenter,
+                            child: Container(
+                              alignment: Alignment.bottomCenter,
+                              padding: const EdgeInsets.all(8),
+                              child: MaterialButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                minWidth: screenWidth,
+                                height: 50,
+                                elevation: 10,
+                                onPressed: _manageService,
+                                color: Theme.of(context).colorScheme.primary,
+                                child: const Text(
+                                  "Manage Shop's Service",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                ),
+                              ),
+                            ),
+                          ),
                   ),
                 ]),
               ),
-            )
+            ),
           ]),
         ));
   }
 
-  void _updateServiceDialog() {
+  void _updateShopDialog() {
     if (_imageList.length < 2) {
       Fluttertoast.showToast(
           msg: "Please insert THREE images",
@@ -364,7 +383,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: const Text(
-              "Update service",
+              "Update shop",
               textAlign: TextAlign.center,
             ),
             content: const Text(
@@ -382,7 +401,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     ),
                     onPressed: () {
                       Navigator.of(context).pop();
-                      _updateService();
+                      _updateShop();
                     },
                   ),
                   TextButton(
@@ -412,7 +431,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: const Text(
-              "Manage service images",
+              "Manage shop images",
               textAlign: TextAlign.center,
             ),
             actions: <Widget>[
@@ -538,7 +557,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
     }
   }
 
-  void _updateService() {
+  void _updateShop() {
     if (selectBank == "Please select a Bank") {
       Fluttertoast.showToast(
           msg: "Please select a Bank",
@@ -550,7 +569,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
     }
     String sname = _snameEditingController.text;
     String sdesc = _sdescEditingController.text;
-    String sprice = _spriceEditingController.text;
     String saddr = _saddrEditingController.text;
     String sbank = selectBank;
     String sbankacc = _sbankaccEditingController.text;
@@ -560,18 +578,16 @@ class _DetailsScreenState extends State<DetailsScreen> {
     }
     String images = json.encode(base64Images);
 
-    http.post(Uri.parse("${ServerConfig.server}/php/update_service.php"),
-        body: {
-          "serviceid": widget.service.serviceId,
-          "userid": widget.user.id,
-          "sname": sname,
-          "sdesc": sdesc,
-          "sprice": sprice,
-          "saddr": saddr,
-          "sbank": sbank,
-          "sbankacc": sbankacc,
-          "image": images,
-        }).then((response) {
+    http.post(Uri.parse("${ServerConfig.server}/php/update_shop.php"), body: {
+      "shopid": widget.shop.shopId,
+      "userid": widget.user.id,
+      "sname": sname,
+      "sdesc": sdesc,
+      "saddr": saddr,
+      "sbank": sbank,
+      "sbankacc": sbankacc,
+      "image": images,
+    }).then((response) {
       var data = jsonDecode(response.body);
       if (response.statusCode == 200 && data['status'] == "success") {
         Fluttertoast.showToast(
@@ -583,7 +599,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
         _editKey = false;
         DefaultCacheManager manager = DefaultCacheManager();
         manager.emptyCache();
-        setState(() {selectBank = sbank;});
+        setState(() {
+          selectBank = sbank;
+        });
         return;
       } else {
         Fluttertoast.showToast(
@@ -605,7 +623,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           title: Text(
-            "Delete ${widget.service.serviceName}",
+            "Delete ${widget.shop.shopName}",
             textAlign: TextAlign.center,
           ),
           content: const Text("Are you sure?", textAlign: TextAlign.center),
@@ -620,7 +638,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   ),
                   onPressed: () async {
                     Navigator.of(context).pop();
-                    _deleteService();
+                    _deleteShop();
                   },
                 ),
                 TextButton(
@@ -640,12 +658,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
     );
   }
 
-  void _deleteService() {
+  void _deleteShop() {
     try {
-      http.post(Uri.parse("${ServerConfig.server}/php/delete_service.php"),
-          body: {
-            "serviceid": widget.service.serviceId,
-          }).then((response) {
+      http.post(Uri.parse("${ServerConfig.server}/php/delete_shop.php"), body: {
+        "shopid": widget.shop.shopId,
+      }).then((response) {
         var data = jsonDecode(response.body);
         if (response.statusCode == 200 && data['status'] == "success") {
           Fluttertoast.showToast(
@@ -672,21 +689,20 @@ class _DetailsScreenState extends State<DetailsScreen> {
   }
 
   Future<void> _loadDetails() async {
-    _snameEditingController.text = widget.service.serviceName.toString();
-    _sdescEditingController.text = widget.service.serviceDesc.toString();
-    _spriceEditingController.text = widget.service.servicePrice.toString();
-    _saddrEditingController.text = widget.service.serviceAddress.toString();
-    _sbankaccEditingController.text = widget.service.serviceBankAcc.toString();
-    selectBank = widget.service.serviceBank.toString();
+    _snameEditingController.text = widget.shop.shopName.toString();
+    _sdescEditingController.text = widget.shop.shopDesc.toString();
+    _saddrEditingController.text = widget.shop.shopAddress.toString();
+    _sbankaccEditingController.text = widget.shop.shopBankAcc.toString();
+    selectBank = widget.shop.shopBank.toString();
   }
 
   Future<void> _loadImages() async {
     _imageList.clear();
-    int imageLength = int.parse(widget.service.serviceImages.toString());
+    int imageLength = int.parse(widget.shop.serviceImages.toString());
 
     for (int i = 1; i <= imageLength; i++) {
       String imageUrl =
-          "${ServerConfig.server}/assets/serviceimages/${widget.service.serviceId}_$i.png";
+          "${ServerConfig.server}/assets/serviceimages/${widget.shop.shopId}_$i.png";
 
       File file = await urlToFile(imageUrl);
       _imageList.add(file);
@@ -703,5 +719,14 @@ class _DetailsScreenState extends State<DetailsScreen> {
     http.Response response = await http.get(uri);
     await file.writeAsBytes(response.bodyBytes);
     return file;
+  }
+
+  void _manageService() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (content) => ShopServiceScreen(
+                  shop: widget.shop,
+                )));
   }
 }

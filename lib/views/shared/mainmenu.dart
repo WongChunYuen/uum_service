@@ -17,6 +17,7 @@ class MainMenuWidget extends StatefulWidget {
 }
 
 class _MainMenuWidgetState extends State<MainMenuWidget> {
+  // ignore: prefer_typing_uninitialized_variables
   var _imageStatus;
 
   @override

@@ -8,7 +8,7 @@ class QuantitySelector extends StatefulWidget {
       {super.key, required this.initialValue, required this.onValueChanged});
 
   @override
-  _QuantitySelectorState createState() => _QuantitySelectorState();
+  State<QuantitySelector> createState() => _QuantitySelectorState();
 }
 
 class _QuantitySelectorState extends State<QuantitySelector> {
@@ -51,7 +51,7 @@ class _QuantitySelectorState extends State<QuantitySelector> {
             onPressed: _decrementValue,
           ),
         ),
-        Container(
+        SizedBox(
           width: 33,
           child: Center(child: Text('$_value')),
         ),

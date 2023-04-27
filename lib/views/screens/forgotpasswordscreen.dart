@@ -4,7 +4,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import '../../serverconfig.dart';
 import 'otpscreen.dart';
-import 'resetpasswordscreen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -15,7 +14,6 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController _emailEditingController = TextEditingController();
-  final TextEditingController _passEditingController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
   var screenHeight, screenWidth, cardwitdh;

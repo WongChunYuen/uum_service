@@ -193,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         GestureDetector(
                           onTap:
-                              _verifyStatus == 'no' ? _VerifyUserDialog : null,
+                              _verifyStatus == 'no' ? _verifyUserDialog : null,
                           child: _verifyStatus == 'no'
                               ? Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -797,7 +797,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  void _VerifyUserDialog() {
+  void _verifyUserDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {

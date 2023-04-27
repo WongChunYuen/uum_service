@@ -2,18 +2,19 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../../models/service.dart';
+import '../../models/shop.dart';
 import '../../models/user.dart';
 import '../../serverconfig.dart';
 
 class AdminDetailScreen extends StatefulWidget {
-  final Service service;
+  final Shop shop;
+  // final Service service;
   final User user;
   final User seller;
   const AdminDetailScreen(
       {Key? key,
       required this.user,
-      required this.service,
+      required this.shop,
       required this.seller})
       : super(key: key);
 
@@ -101,7 +102,7 @@ class _AdminDetailScreenState extends State<AdminDetailScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      widget.service.serviceName.toString(),
+                      widget.shop.shopName.toString(),
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
@@ -125,7 +126,7 @@ class _AdminDetailScreenState extends State<AdminDetailScreen> {
                       enabled: false,
                       controller: _spriceController,
                       decoration: const InputDecoration(
-                          labelText: 'Service Price/days',
+                          labelText: 'Service Price Range',
                           labelStyle: TextStyle(),
                           icon: Icon(Icons.attach_money),
                           focusedBorder: OutlineInputBorder(
@@ -160,19 +161,19 @@ class _AdminDetailScreenState extends State<AdminDetailScreen> {
 
   Future<void> _loadDetails() async {
     _sellernameController.text = widget.seller.name.toString();
-    _snameController.text = widget.service.serviceName.toString();
-    _sdescController.text = widget.service.serviceDesc.toString();
-    _spriceController.text = widget.service.servicePrice.toString();
-    _saddrController.text = widget.service.serviceAddress.toString();
-    _sbankaccController.text = widget.service.serviceBankAcc.toString();
+    _snameController.text = widget.shop.shopName.toString();
+    _sdescController.text = widget.shop.shopDesc.toString();
+    _spriceController.text = "10 - 15"; // need to change
+    _saddrController.text = widget.shop.shopAddress.toString();
+    _sbankaccController.text = widget.shop.shopBankAcc.toString();
   }
 
   Future<void> _loadImages() async {
-    int imageLength = int.parse(widget.service.serviceImages.toString());
+    int imageLength = int.parse(widget.shop.serviceImages.toString());
 
     for (int i = 1; i <= imageLength; i++) {
       String imageUrl =
-          "${ServerConfig.server}/assets/serviceimages/${widget.service.serviceId}_$i.png";
+          "${ServerConfig.server}/assets/serviceimages/${widget.shop.shopId}_$i.png";
 
       _imageList.add(imageUrl);
     }
@@ -187,7 +188,7 @@ class _AdminDetailScreenState extends State<AdminDetailScreen> {
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           title: Text(
-            "Delete ${widget.service.serviceName}",
+            "Delete ${widget.shop.shopName}",
             textAlign: TextAlign.center,
           ),
           content: const Text("Are you sure?", textAlign: TextAlign.center),
@@ -202,7 +203,7 @@ class _AdminDetailScreenState extends State<AdminDetailScreen> {
                   ),
                   onPressed: () async {
                     Navigator.of(context).pop();
-                    _deleteService();
+                    _deleteShop();
                   },
                 ),
                 TextButton(
@@ -222,11 +223,11 @@ class _AdminDetailScreenState extends State<AdminDetailScreen> {
     );
   }
 
-  void _deleteService() {
+  void _deleteShop() {
     try {
-      http.post(Uri.parse("${ServerConfig.server}/php/delete_service.php"),
+      http.post(Uri.parse("${ServerConfig.server}/php/delete_shop.php"),
           body: {
-            "serviceid": widget.service.serviceId,
+            "shopid": widget.shop.shopId,
           }).then((response) {
         var data = jsonDecode(response.body);
         if (response.statusCode == 200 && data['status'] == "success") {
