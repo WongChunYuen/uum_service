@@ -261,7 +261,9 @@ class _BuyerDetailScreenState extends State<BuyerDetailScreen> {
       isScrollControlled: true,
       builder: (BuildContext context) {
         return OrderDetailsModal(
-          shopid: widget.shop.shopId.toString(),
+          shop: widget.shop,
+          user: widget.user,
+          seller: widget.seller,
         );
       },
     );

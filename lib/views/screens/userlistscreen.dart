@@ -19,7 +19,7 @@ class UserListScreen extends StatefulWidget {
 
 class _UserListScreenState extends State<UserListScreen> {
   List<User> userList = <User>[];
-  String titlecenter = "Loading...";
+  String titlecenter = "Loading";
   var color;
   var numofpage, curpage = 1;
   int numberofresult = 0;
@@ -43,10 +43,12 @@ class _UserListScreenState extends State<UserListScreen> {
         ],
       ),
       body: userList.isEmpty
-          ? Center(
-              child: Text(titlecenter,
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold)))
+          ? titlecenter == "Loading"
+              ? const Center(child: CircularProgressIndicator())
+              : Center(
+                  child: Text(titlecenter,
+                      style: const TextStyle(
+                          fontSize: 22, fontWeight: FontWeight.bold)))
           : Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -262,12 +264,11 @@ class _UserListScreenState extends State<UserListScreen> {
 
   void _showDetails(int index) async {
     User user = User.fromJson(userList[index].toJson());
-    ProgressDialog progressDialog = ProgressDialog(
-      context,
-      blur: 5,
-      message: const Text("Loading..."),
-      title: null,
-    );
+    ProgressDialog progressDialog = ProgressDialog(context,
+        blur: 5,
+        message: const Text("Loading..."),
+        title: null,
+        dismissable: false);
     progressDialog.show();
     Timer(const Duration(seconds: 1), () {
       progressDialog.dismiss();
@@ -278,7 +279,6 @@ class _UserListScreenState extends State<UserListScreen> {
                     user: user,
                     list: 1,
                   )));
-      progressDialog.dismiss();
     });
     setState(() {});
   }

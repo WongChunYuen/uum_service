@@ -727,6 +727,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
         MaterialPageRoute(
             builder: (content) => ShopServiceScreen(
                   shop: widget.shop,
+                  userId: int.parse(widget.user.id.toString()),
                 )));
   }
 }

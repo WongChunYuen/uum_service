@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../../models/shop.dart';
 import '../../models/user.dart';
 import '../../serverconfig.dart';
+import 'shopservice.dart';
 
 class AdminDetailScreen extends StatefulWidget {
   final Shop shop;
@@ -12,10 +13,7 @@ class AdminDetailScreen extends StatefulWidget {
   final User user;
   final User seller;
   const AdminDetailScreen(
-      {Key? key,
-      required this.user,
-      required this.shop,
-      required this.seller})
+      {Key? key, required this.user, required this.shop, required this.seller})
       : super(key: key);
 
   @override
@@ -152,6 +150,29 @@ class _AdminDetailScreenState extends State<AdminDetailScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: Container(
+                      alignment: Alignment.bottomCenter,
+                      padding: const EdgeInsets.all(8),
+                      child: MaterialButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0)),
+                        minWidth: screenWidth,
+                        height: 50,
+                        elevation: 10,
+                        onPressed: _showService,
+                        color: Theme.of(context).colorScheme.primary,
+                        child: const Text(
+                          "Show Shop's Service",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                      ),
+                    ),
+                  ),
                 ]),
               ),
             )
@@ -225,10 +246,9 @@ class _AdminDetailScreenState extends State<AdminDetailScreen> {
 
   void _deleteShop() {
     try {
-      http.post(Uri.parse("${ServerConfig.server}/php/delete_shop.php"),
-          body: {
-            "shopid": widget.shop.shopId,
-          }).then((response) {
+      http.post(Uri.parse("${ServerConfig.server}/php/delete_shop.php"), body: {
+        "shopid": widget.shop.shopId,
+      }).then((response) {
         var data = jsonDecode(response.body);
         if (response.statusCode == 200 && data['status'] == "success") {
           Fluttertoast.showToast(
@@ -252,5 +272,15 @@ class _AdminDetailScreenState extends State<AdminDetailScreen> {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  void _showService() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (content) => ShopServiceScreen(
+                  shop: widget.shop,
+                  userId: int.parse(widget.user.id.toString()),
+                )));
   }
 }

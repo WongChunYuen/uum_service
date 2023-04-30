@@ -42,7 +42,7 @@ class _ServiceEditDialogState extends State<ServiceEditDialog> {
       title: const Text("Edit service name"),
       content: SizedBox(
         width: 300.0,
-        height: 200.0,
+        height: 180.0,
         child: Column(
           children: [
             TextFormField(

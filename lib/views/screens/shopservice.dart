@@ -9,7 +9,9 @@ import 'serviceeditdialog.dart';
 
 class ShopServiceScreen extends StatefulWidget {
   final Shop shop;
-  const ShopServiceScreen({super.key, required this.shop});
+  final int userId;
+  const ShopServiceScreen(
+      {super.key, required this.shop, required this.userId});
 
   @override
   State<ShopServiceScreen> createState() => _ShopServiceScreenState();
@@ -54,26 +56,6 @@ class _ShopServiceScreenState extends State<ShopServiceScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Shop's Services"),
-        // actions: [
-        //   PopupMenuButton(itemBuilder: (context) {
-        //     return [
-        //       const PopupMenuItem<int>(
-        //         value: 0,
-        //         child: Text("New Shop"),
-        //       ),
-        //       const PopupMenuItem<int>(
-        //         value: 1,
-        //         child: Text("Order List"),
-        //       ),
-        //     ];
-        //   }, onSelected: (value) {
-        //     if (value == 0) {
-        //       _createNewServiceDialog();
-        //     } else if (value == 1) {
-        //       // Show order list
-        //     }
-        //   }),
-        // ]
       ),
       body: serviceList.isEmpty
           ? Center(
@@ -88,18 +70,20 @@ class _ShopServiceScreenState extends State<ShopServiceScreen> {
                         onRefresh: refresh, child: myStatefulWidget())),
               ],
             ),
-      floatingActionButton: Align(
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: FloatingActionButton(
-            onPressed: () {
-              _createNewServiceDialog();
-            },
-            child: const Icon(Icons.add),
-          ),
-        ),
-      ),
+      floatingActionButton: widget.userId > 10
+          ? Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: FloatingActionButton(
+                  onPressed: () {
+                    _createNewServiceDialog();
+                  },
+                  child: const Icon(Icons.add),
+                ),
+              ),
+            )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
@@ -111,7 +95,9 @@ class _ShopServiceScreenState extends State<ShopServiceScreen> {
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () {
-            _showEditDialog(index);
+            if (widget.userId > 10) {
+              _showEditDialog(index);
+            }
             _loadServices();
           },
           child: customListItemTwo(
@@ -134,7 +120,9 @@ class _ShopServiceScreenState extends State<ShopServiceScreen> {
       padding: const EdgeInsets.symmetric(vertical: 3.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: serviceList[index].serviceStatus == 'available'
+              ? Colors.white
+              : Colors.black12,
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),

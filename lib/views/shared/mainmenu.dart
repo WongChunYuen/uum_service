@@ -4,6 +4,8 @@ import '../../models/user.dart';
 import '../../serverconfig.dart';
 import '../screens/buyerscreen.dart';
 import '../screens/loginscreen.dart';
+import '../screens/orderhistoryscreen.dart';
+import '../screens/orderlistscreen.dart';
 import '../screens/profilescreen.dart';
 import '../screens/sellerscreeen.dart';
 import 'EnterExitRoute.dart';
@@ -271,6 +273,12 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
             title: const Text('Order List'),
             onTap: () {
               Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  EnterExitRoute(
+                      exitPage: BuyerScreen(user: widget.user),
+                      enterPage: OrderListScreen(
+                          sellerId: widget.user.id.toString())));
             },
           ),
           ListTile(
@@ -278,6 +286,12 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
             title: const Text('Order History'),
             onTap: () {
               Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  EnterExitRoute(
+                      exitPage: BuyerScreen(user: widget.user),
+                      enterPage: OrderHistoryScreen(
+                          userId: widget.user.id.toString())));
             },
           ),
           // ListTile(

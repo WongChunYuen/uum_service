@@ -285,12 +285,11 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
 
   void _showDetails(int index) async {
     User user = User.fromJson(userList[index].toJson());
-    ProgressDialog progressDialog = ProgressDialog(
-      context,
-      blur: 5,
-      message: const Text("Loading..."),
-      title: null,
-    );
+    ProgressDialog progressDialog = ProgressDialog(context,
+        blur: 5,
+        message: const Text("Loading..."),
+        title: null,
+        dismissable: false);
     progressDialog.show();
     Timer(const Duration(seconds: 1), () {
       progressDialog.dismiss();

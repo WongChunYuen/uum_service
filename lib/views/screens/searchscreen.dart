@@ -104,8 +104,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             color = Colors.black;
                           }
                           return TextButton(
-                              onPressed: () =>
-                                  {_loadShops(search, index + 1)},
+                              onPressed: () => {_loadShops(search, index + 1)},
                               child: Text(
                                 (index + 1).toString(),
                                 style: TextStyle(color: color, fontSize: 18),
@@ -269,12 +268,11 @@ class _SearchScreenState extends State<SearchScreen> {
   void _showDetails(int index) async {
     Shop shop = Shop.fromJson(shopList[index].toJson());
     loadSingleSeller(index);
-    ProgressDialog progressDialog = ProgressDialog(
-      context,
-      blur: 5,
-      message: const Text("Loading..."),
-      title: null,
-    );
+    ProgressDialog progressDialog = ProgressDialog(context,
+        blur: 5,
+        message: const Text("Loading..."),
+        title: null,
+        dismissable: false);
     progressDialog.show();
     Timer(const Duration(seconds: 1), () {
       if (seller != null) {

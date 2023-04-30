@@ -20,7 +20,7 @@ class SellerScreen extends StatefulWidget {
 
 class _SellerScreenState extends State<SellerScreen> {
   List<Shop> shopList = <Shop>[];
-  String titlecenter = "Loading...";
+  String titlecenter = "Loading";
   late double screenHeight, screenWidth, resWidth;
   int rowcount = 2;
 
@@ -72,10 +72,12 @@ class _SellerScreenState extends State<SellerScreen> {
         }),
       ]),
       body: shopList.isEmpty
-          ? Center(
-              child: Text(titlecenter,
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold)))
+          ? titlecenter == "Loading"
+              ? const Center(child: CircularProgressIndicator())
+              : Center(
+                  child: Text(titlecenter,
+                      style: const TextStyle(
+                          fontSize: 22, fontWeight: FontWeight.bold)))
           : Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -332,10 +334,9 @@ class _SellerScreenState extends State<SellerScreen> {
 
   void _deleteShop(index) {
     try {
-      http.post(Uri.parse("${ServerConfig.server}/php/delete_shop.php"),
-          body: {
-            "shopid": shopList[index].shopId,
-          }).then((response) {
+      http.post(Uri.parse("${ServerConfig.server}/php/delete_shop.php"), body: {
+        "shopid": shopList[index].shopId,
+      }).then((response) {
         var data = jsonDecode(response.body);
         if (response.statusCode == 200 && data['status'] == "success") {
           Fluttertoast.showToast(

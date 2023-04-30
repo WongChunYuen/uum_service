@@ -53,10 +53,12 @@ class _BuyerScreenState extends State<BuyerScreen> {
         ],
       ),
       body: shopList.isEmpty
-          ? Center(
-              child: Text(titlecenter,
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold)))
+          ? titlecenter == "Loading"
+              ? const Center(child: CircularProgressIndicator())
+              : Center(
+                  child: Text(titlecenter,
+                      style: const TextStyle(
+                          fontSize: 22, fontWeight: FontWeight.bold)))
           : Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -247,12 +249,11 @@ class _BuyerScreenState extends State<BuyerScreen> {
   void _showDetails(int index) async {
     Shop shop = Shop.fromJson(shopList[index].toJson());
     loadSingleSeller(index);
-    ProgressDialog progressDialog = ProgressDialog(
-      context,
-      blur: 5,
-      message: const Text("Loading..."),
-      title: null,
-    );
+    ProgressDialog progressDialog = ProgressDialog(context,
+        blur: 5,
+        message: const Text("Loading..."),
+        title: null,
+        dismissable: false);
     progressDialog.show();
     Timer(const Duration(seconds: 1), () {
       if (seller != null) {

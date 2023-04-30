@@ -2,14 +2,20 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../models/service.dart';
+import '../../models/shop.dart';
+import '../../models/user.dart';
 import '../../serverconfig.dart';
 import 'ordertimemodal.dart';
 import 'quantityselector.dart';
 import 'package:http/http.dart' as http;
 
 class OrderDetailsModal extends StatefulWidget {
-  final String shopid;
-  const OrderDetailsModal({Key? key, required this.shopid}) : super(key: key);
+  final Shop shop;
+  final User user;
+  final User seller;
+  const OrderDetailsModal(
+      {Key? key, required this.shop, required this.user, required this.seller})
+      : super(key: key);
 
   @override
   State<OrderDetailsModal> createState() => _OrderDetailsModalState();
@@ -20,7 +26,8 @@ class _OrderDetailsModalState extends State<OrderDetailsModal> {
   List<String> _serviceName = [];
   List<String> _servicePrice = [];
   int index = -1;
-  String _selectedOption = '', _selectedOptionA = '', serviceTitle = '';
+  int quantity = 1;
+  String _selectedOption = '', serviceTitle = '';
   bool areOptionsSelected = false;
   bool areOptionsSelectedA = false;
   late double screenHeight, screenWidth;
@@ -76,7 +83,8 @@ class _OrderDetailsModalState extends State<OrderDetailsModal> {
                                     setState(() {
                                       _selectedOption = option;
                                       areOptionsSelected = true;
-                                      findServicePrice();
+                                      index =
+                                          _serviceName.indexOf(_selectedOption);
                                     });
                                   },
                                   child: Container(
@@ -150,12 +158,17 @@ class _OrderDetailsModalState extends State<OrderDetailsModal> {
                           fontSize: 24,
                         ),
                       )
-                    : Text(
-                        'RM ${_servicePrice[index]}',
-                        style: const TextStyle(
-                          fontSize: 24,
-                        ),
-                      ),
+                    : serviceList[index].serviceStatus == 'unavailable'
+                        ? const Text(
+                            'The service is not available now',
+                            style: TextStyle(fontSize: 24, color: Colors.red),
+                          )
+                        : Text(
+                            'RM ${_servicePrice[index]}',
+                            style: const TextStyle(
+                              fontSize: 24,
+                            ),
+                          ),
                 const SizedBox(height: 8),
                 const Divider(
                   color: Colors.grey,
@@ -168,11 +181,7 @@ class _OrderDetailsModalState extends State<OrderDetailsModal> {
                   children: [
                     const Text('Quantity'),
                     QuantitySelector(
-                      initialValue: 1,
-                      onValueChanged: (value) {
-                        // Handle the new value here
-                      },
-                    ),
+                        initialValue: 1, onValueChanged: handleQuantityChanged),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -192,8 +201,16 @@ class _OrderDetailsModalState extends State<OrderDetailsModal> {
                     if (areOptionsSelected
                         // && areOptionsSelectedA
                         ) {
-                      // Perform the purchase
-                      _orderService();
+                      if (serviceList[index].serviceStatus == 'unavailable') {
+                        Fluttertoast.showToast(
+                            msg: "The service is not available now",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            fontSize: 14.0);
+                      } else {
+                        _orderService();
+                      }
                     } else {
                       Fluttertoast.showToast(
                           msg: "Please select the service",
@@ -221,7 +238,7 @@ class _OrderDetailsModalState extends State<OrderDetailsModal> {
     http
         .get(
       Uri.parse(
-          "${ServerConfig.server}/php/load_service.php?shopid=${widget.shopid}"),
+          "${ServerConfig.server}/php/load_service.php?shopid=${widget.shop.shopId}"),
     )
         .then((response) {
       print(response.body);
@@ -256,18 +273,24 @@ class _OrderDetailsModalState extends State<OrderDetailsModal> {
     }
   }
 
-  void findServicePrice() {
-    index = _serviceName.indexOf(_selectedOption);
+  void handleQuantityChanged(int value) {
+    quantity = value;
   }
 
   void _orderService() {
-    print(_selectedOption);
     Navigator.pop(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return const OrderTimeModal();
+        return OrderTimeModal(
+          quantity: quantity,
+          service: serviceList[index],
+          user: widget.user,
+          seller: widget.seller,
+          shopName: widget.shop.shopName.toString(),
+          shopId: widget.shop.shopId.toString(),
+        );
       },
     );
   }

@@ -19,7 +19,7 @@ class VerificationListScreen extends StatefulWidget {
 
 class _VerificationListScreenState extends State<VerificationListScreen> {
   List<User> userList = <User>[];
-  String titlecenter = "Loading...";
+  String titlecenter = "Loading";
   // ignore: prefer_typing_uninitialized_variables
   var color;
   // ignore: prefer_typing_uninitialized_variables
@@ -45,10 +45,12 @@ class _VerificationListScreenState extends State<VerificationListScreen> {
         ],
       ),
       body: userList.isEmpty
-          ? Center(
-              child: Text(titlecenter,
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold)))
+          ? titlecenter == "Loading"
+              ? const Center(child: CircularProgressIndicator())
+              : Center(
+                  child: Text(titlecenter,
+                      style: const TextStyle(
+                          fontSize: 22, fontWeight: FontWeight.bold)))
           : Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

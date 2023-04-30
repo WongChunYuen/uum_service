@@ -106,7 +106,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               onChanged: (bool? value) {
                                 setState(() {
                                   _isChecked = value!;
-                                  saveremovepref(value);
                                 });
                               },
                             ),
@@ -199,6 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (content) => BuyerScreen(user: user)));
         }
+        saveremovepref();
       } else {
         Fluttertoast.showToast(
             msg: "Login Failed",
@@ -223,21 +223,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // Method that let user save and remove preference
-  void saveremovepref(bool value) async {
+  void saveremovepref() async {
     String email = _emailEditingController.text;
     String password = _passEditingController.text;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (value) {
-      if (!_formKey.currentState!.validate()) {
-        Fluttertoast.showToast(
-            msg: "Please fill in the login credentials",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            fontSize: 14.0);
-        _isChecked = false;
-        return;
-      }
+    if (_isChecked) {
       await prefs.setString('email', email);
       await prefs.setString('pass', password);
       Fluttertoast.showToast(
@@ -251,8 +241,8 @@ class _LoginScreenState extends State<LoginScreen> {
       await prefs.setString('email', '');
       await prefs.setString('pass', '');
       setState(() {
-        _emailEditingController.text = '';
-        _passEditingController.text = '';
+        // _emailEditingController.text = '';
+        // _passEditingController.text = '';
         _isChecked = false;
       });
       Fluttertoast.showToast(
