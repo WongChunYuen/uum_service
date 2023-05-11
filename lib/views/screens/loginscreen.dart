@@ -140,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         const SizedBox(
-                          height: 8,
+                          height: 12,
                         ),
                       ]),
                     ))),
@@ -152,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             const SizedBox(
-              height: 8,
+              height: 12,
             ),
             GestureDetector(
               onTap: _forgotPassword,
