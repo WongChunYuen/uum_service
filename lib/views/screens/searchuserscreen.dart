@@ -27,7 +27,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
   var color;
   var numofpage, curpage = 1;
   int numberofresult = 0;
-  int limit = 10;
+  int limit = 0;
 
   @override
   void dispose() {
@@ -89,27 +89,6 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                       ),
                     ),
                     Expanded(child: myStatefulWidget()),
-                    SizedBox(
-                      height: 50,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: numofpage,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          if ((curpage - 1) == index) {
-                            color = Colors.indigoAccent;
-                          } else {
-                            color = Colors.black;
-                          }
-                          return TextButton(
-                              onPressed: () => {_loadUsers(search, index + 1)},
-                              child: Text(
-                                (index + 1).toString(),
-                                style: TextStyle(color: color, fontSize: 18),
-                              ));
-                        },
-                      ),
-                    ),
                   ],
                 ),
     );

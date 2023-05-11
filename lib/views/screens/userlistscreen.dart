@@ -23,14 +23,41 @@ class _UserListScreenState extends State<UserListScreen> {
   var color;
   var numofpage, curpage = 1;
   int numberofresult = 0;
+  int page = 1;
   int limit = 10;
+  final controller = ScrollController();
+  bool isLoading = false;
+  bool hasMore = true;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _loadUsers(1);
+      _loadUsers(page);
     });
+    controller.addListener(() {
+      if (controller.position.maxScrollExtent == controller.offset) {
+        if (hasMore) {
+          page++;
+          fetch();
+        }
+      }
+    });
+  }
+
+  Future fetch() async {
+    if (isLoading) return;
+    isLoading = true;
+    _loadUsers(page);
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -43,12 +70,12 @@ class _UserListScreenState extends State<UserListScreen> {
         ],
       ),
       body: userList.isEmpty
-          ? titlecenter == "Loading"
-              ? const Center(child: CircularProgressIndicator())
-              : Center(
+          ? titlecenter == "No user Available"
+              ? Center(
                   child: Text(titlecenter,
                       style: const TextStyle(
                           fontSize: 22, fontWeight: FontWeight.bold)))
+              : const Center(child: CircularProgressIndicator())
           : Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -61,27 +88,6 @@ class _UserListScreenState extends State<UserListScreen> {
                   ),
                 ),
                 Expanded(child: myStatefulWidget()),
-                SizedBox(
-                  height: 50,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: numofpage,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      if ((curpage - 1) == index) {
-                        color = Colors.indigoAccent;
-                      } else {
-                        color = Colors.black;
-                      }
-                      return TextButton(
-                          onPressed: () => {_loadUsers(index + 1)},
-                          child: Text(
-                            (index + 1).toString(),
-                            style: TextStyle(color: color, fontSize: 18),
-                          ));
-                    },
-                  ),
-                ),
               ],
             ),
     );
@@ -89,40 +95,52 @@ class _UserListScreenState extends State<UserListScreen> {
 
   Widget myStatefulWidget() {
     return ListView.builder(
+      controller: controller,
       padding: const EdgeInsets.all(10.0),
-      itemCount: userList.length,
+      itemCount: userList.length + 1,
       itemBuilder: (context, index) {
-        return InkWell(
-          onTap: () {
-            _showDetails(index);
-          },
-          child: userList[index].image == "no"
-              ? customListItemTwo(
-                  thumbnail: ClipOval(
-                    child: Image.asset(
-                      "assets/images/profile.png",
-                      height: 150,
-                      width: 150,
+        if (index < userList.length) {
+          return InkWell(
+            onTap: () {
+              _showDetails(index);
+            },
+            child: userList[index].image == "no"
+                ? customListItemTwo(
+                    thumbnail: ClipOval(
+                      child: Image.asset(
+                        "assets/images/profile.png",
+                        height: 150,
+                        width: 150,
+                      ),
                     ),
-                  ),
-                  id: "ID: ${userList[index].id}",
-                  name: userList[index].name.toString(),
-                  index: index)
-              : customListItemTwo(
-                  thumbnail: ClipOval(
-                    child: CachedNetworkImage(
-                      imageUrl:
-                          "${ServerConfig.server}/assets/profileimages/${userList[index].id}.png",
-                      placeholder: (context, url) =>
-                          const LinearProgressIndicator(),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
+                    id: "ID: ${userList[index].id}",
+                    name: userList[index].name.toString(),
+                    index: index)
+                : customListItemTwo(
+                    thumbnail: ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            "${ServerConfig.server}/assets/profileimages/${userList[index].id}.png",
+                        placeholder: (context, url) =>
+                            const LinearProgressIndicator(),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      ),
                     ),
-                  ),
-                  id: "ID: ${userList[index].id}",
-                  name: userList[index].name.toString(),
-                  index: index),
-        );
+                    id: "ID: ${userList[index].id}",
+                    name: userList[index].name.toString(),
+                    index: index),
+          );
+        } else {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: Center(
+              child: hasMore
+                  ? const CircularProgressIndicator()
+                  : const Text("No more users"),
+            ),
+          );
+        }
       },
     );
   }
@@ -224,21 +242,26 @@ class _UserListScreenState extends State<UserListScreen> {
             numofpage = int.parse(jsondata['numofpage']);
             numberofresult = int.parse(jsondata['numberofresult']);
 
-            userList = <User>[];
+            List newUserList = <User>[];
+            newUserList.clear();
             extractdata['users'].forEach((v) {
+              newUserList.add(User.fromJson(v));
               userList.add(User.fromJson(v));
             });
             titlecenter = "Found";
+            if (newUserList.length < limit) {
+              hasMore = false;
+            }
           } else {
-            titlecenter = "No service Available";
+            titlecenter = "No user Available";
             userList.clear();
           }
         } else {
-          titlecenter = "No service Available";
+          titlecenter = "No user Available";
           userList.clear();
         }
       } else {
-        titlecenter = "No service Available";
+        titlecenter = "No user Available";
         userList.clear();
       }
       setState(() {

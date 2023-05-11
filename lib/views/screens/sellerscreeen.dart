@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:uum_service/views/screens/orderlistscreen.dart';
 import '../../models/shop.dart';
 import '../../models/user.dart';
 import '../../serverconfig.dart';
@@ -67,7 +68,7 @@ class _SellerScreenState extends State<SellerScreen> {
           if (value == 0) {
             _createNewShop();
           } else if (value == 1) {
-            // Show order list
+            _goOrderList();
           }
         }),
       ]),
@@ -239,6 +240,16 @@ class _SellerScreenState extends State<SellerScreen> {
         MaterialPageRoute(
             builder: (content) => NewShopScreen(
                   user: widget.user,
+                )));
+    _loadShops();
+  }
+
+  void _goOrderList() async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (content) => OrderListScreen(
+                  sellerId: widget.user.id.toString(),
                 )));
     _loadShops();
   }

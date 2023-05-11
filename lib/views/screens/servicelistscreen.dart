@@ -26,18 +26,40 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
   var color;
   var numofpage, curpage = 1;
   int numberofresult = 0;
-  int limit = 5;
+  int page = 1;
+  int limit = 10;
+  final controller = ScrollController();
+  bool isLoading = false;
+  bool hasMore = true;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _loadShops(1);
+      _loadShops(page);
+    });
+    controller.addListener(() {
+      if (controller.position.maxScrollExtent == controller.offset) {
+        if (hasMore) {
+          page++;
+          fetch();
+        }
+      }
+    });
+  }
+
+  Future fetch() async {
+    if (isLoading) return;
+    isLoading = true;
+    _loadShops(page);
+    setState(() {
+      isLoading = false;
     });
   }
 
   @override
   void dispose() {
+    controller.dispose();
     super.dispose();
   }
 
@@ -51,12 +73,12 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
         ],
       ),
       body: shopList.isEmpty
-          ? titlecenter == "Loading"
-              ? const Center(child: CircularProgressIndicator())
-              : Center(
+          ? titlecenter == "No service Available"
+              ? Center(
                   child: Text(titlecenter,
                       style: const TextStyle(
                           fontSize: 22, fontWeight: FontWeight.bold)))
+              : const Center(child: CircularProgressIndicator())
           : Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -69,27 +91,6 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
                   ),
                 ),
                 Expanded(child: myStatefulWidget()),
-                SizedBox(
-                  height: 50,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: numofpage,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      if ((curpage - 1) == index) {
-                        color = Colors.indigoAccent;
-                      } else {
-                        color = Colors.black;
-                      }
-                      return TextButton(
-                          onPressed: () => {_loadShops(index + 1)},
-                          child: Text(
-                            (index + 1).toString(),
-                            style: TextStyle(color: color, fontSize: 18),
-                          ));
-                    },
-                  ),
-                ),
               ],
             ),
     );
@@ -97,24 +98,37 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
 
   Widget myStatefulWidget() {
     return ListView.builder(
+      controller: controller,
       padding: const EdgeInsets.all(10.0),
-      itemCount: shopList.length,
+      itemCount: shopList.length + 1,
       itemBuilder: (context, index) {
-        return InkWell(
-          onTap: () {
-            _showDetails(index);
-          },
-          child: customListItemTwo(
-              thumbnail: CachedNetworkImage(
-                imageUrl:
-                    "${ServerConfig.server}/assets/serviceimages/${shopList[index].shopId}_1.png",
-                placeholder: (context, url) => const LinearProgressIndicator(),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-              ),
-              title: shopList[index].shopName.toString(),
-              subtitle: shopList[index].shopDesc.toString(),
-              index: index),
-        );
+        if (index < shopList.length) {
+          return InkWell(
+            onTap: () {
+              _showDetails(index);
+            },
+            child: customListItemTwo(
+                thumbnail: CachedNetworkImage(
+                  imageUrl:
+                      "${ServerConfig.server}/assets/serviceimages/${shopList[index].shopId}_1.png",
+                  placeholder: (context, url) =>
+                      const LinearProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
+                title: shopList[index].shopName.toString(),
+                subtitle: shopList[index].shopDesc.toString(),
+                index: index),
+          );
+        } else {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: Center(
+              child: hasMore
+                  ? const CircularProgressIndicator()
+                  : const Text("No more services"),
+            ),
+          );
+        }
       },
     );
   }
@@ -218,11 +232,16 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
             numofpage = int.parse(jsondata['numofpage']);
             numberofresult = int.parse(jsondata['numberofresult']);
 
-            shopList = <Shop>[];
+            List newShopList = <Shop>[];
+            newShopList.clear();
             extractdata['shops'].forEach((v) {
+              newShopList.add(Shop.fromJson(v));
               shopList.add(Shop.fromJson(v));
             });
             titlecenter = "Found";
+            if (newShopList.length < limit) {
+              hasMore = false;
+            }
           } else {
             titlecenter = "No service Available";
             shopList.clear();

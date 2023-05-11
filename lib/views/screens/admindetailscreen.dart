@@ -122,16 +122,6 @@ class _AdminDetailScreenState extends State<AdminDetailScreen> {
                           ))),
                   TextFormField(
                       enabled: false,
-                      controller: _spriceController,
-                      decoration: const InputDecoration(
-                          labelText: 'Service Price Range',
-                          labelStyle: TextStyle(),
-                          icon: Icon(Icons.attach_money),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(width: 2.0),
-                          ))),
-                  TextFormField(
-                      enabled: false,
                       controller: _saddrController,
                       decoration: const InputDecoration(
                           labelText: 'Service Address',

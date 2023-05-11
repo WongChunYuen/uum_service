@@ -91,27 +91,6 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                     ),
                     Expanded(child: myStatefulWidget()),
-                    SizedBox(
-                      height: 50,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: numofpage,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          if ((curpage - 1) == index) {
-                            color = Colors.indigoAccent;
-                          } else {
-                            color = Colors.black;
-                          }
-                          return TextButton(
-                              onPressed: () => {_loadShops(search, index + 1)},
-                              child: Text(
-                                (index + 1).toString(),
-                                style: TextStyle(color: color, fontSize: 18),
-                              ));
-                        },
-                      ),
-                    ),
                   ],
                 ),
     );
