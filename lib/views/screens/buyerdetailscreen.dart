@@ -56,11 +56,11 @@ class _BuyerDetailScreenState extends State<BuyerDetailScreen> {
           child: ClipOval(
             child: Image.asset(
               "assets/whatsapp.png",
-              height: 40,
-              width: 40,
+              height: 30,
+              width: 30,
             ),
           ),
-        )
+        ),
         // PopupMenuButton(itemBuilder: (context) {
         //   return [
         //     const PopupMenuItem<int>(

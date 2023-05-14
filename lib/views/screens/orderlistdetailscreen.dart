@@ -143,8 +143,8 @@ class _OrderListDetailScreenState extends State<OrderListDetailScreen> {
                           child: ClipOval(
                             child: Image.asset(
                               "assets/whatsapp.png",
-                              height: 40,
-                              width: 40,
+                              height: 30,
+                              width: 30,
                             ),
                           ),
                         )
