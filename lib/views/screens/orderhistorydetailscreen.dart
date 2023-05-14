@@ -161,12 +161,10 @@ class _OrderHistoryDetailScreenState extends State<OrderHistoryDetailScreen> {
                         // ),
                         GestureDetector(
                           onTap: _openWhatsApp,
-                          child: ClipOval(
-                            child: Image.asset(
-                              "assets/whatsapp.png",
-                              height: 30,
-                              width: 30,
-                            ),
+                          child: Image.asset(
+                            "assets/whatsapp.png",
+                            height: 30,
+                            width: 30,
                           ),
                         )
                       ],

@@ -53,12 +53,10 @@ class _BuyerDetailScreenState extends State<BuyerDetailScreen> {
         // ),
         GestureDetector(
           onTap: _openWhatsApp,
-          child: ClipOval(
-            child: Image.asset(
-              "assets/whatsapp.png",
-              height: 30,
-              width: 30,
-            ),
+          child: Image.asset(
+            "assets/whatsapp.png",
+            height: 30,
+            width: 30,
           ),
         ),
         // PopupMenuButton(itemBuilder: (context) {
