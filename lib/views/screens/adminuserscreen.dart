@@ -38,8 +38,9 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
   @override
   void initState() {
     super.initState();
-    _imageStatus = widget.user.image;
-    _verifyStatus = widget.user.verify;
+    _imageStatus = widget.user.image.toString();
+    _verifyStatus = widget.user.verify.toString();
+    print(_verifyStatus);
     _loadUserDetails();
   }
 
@@ -196,8 +197,7 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
                               )
                             : _verifyStatus == 'pending'
                                 ? GestureDetector(
-                                    onTap:
-                                        _goVerifyScreen,
+                                    onTap: _goVerifyScreen,
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,

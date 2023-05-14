@@ -47,26 +47,36 @@ class _BuyerDetailScreenState extends State<BuyerDetailScreen> {
     }
     return Scaffold(
       appBar: AppBar(title: const Text("Details"), actions: [
-        IconButton(
-          icon: const Icon(Icons.chat), // whatsapp
-          onPressed: _openWhatsApp,
-        ),
-        PopupMenuButton(itemBuilder: (context) {
-          return [
-            const PopupMenuItem<int>(
-              value: 0,
-              child: Text("Report"),
+        // IconButton(
+        //   icon: const Icon(Icons.chat), // whatsapp
+        //   onPressed: _openWhatsApp,
+        // ),
+        GestureDetector(
+          onTap: _openWhatsApp,
+          child: ClipOval(
+            child: Image.asset(
+              "assets/whatsapp.png",
+              height: 40,
+              width: 40,
             ),
-            const PopupMenuItem<int>(
-              value: 1,
-              child: Text("Nothing"),
-            ),
-          ];
-        }, onSelected: (value) {
-          if (value == 0) {
-            // report
-          }
-        }),
+          ),
+        )
+        // PopupMenuButton(itemBuilder: (context) {
+        //   return [
+        //     const PopupMenuItem<int>(
+        //       value: 0,
+        //       child: Text("Report"),
+        //     ),
+        //     const PopupMenuItem<int>(
+        //       value: 1,
+        //       child: Text("Nothing"),
+        //     ),
+        //   ];
+        // }, onSelected: (value) {
+        //   if (value == 0) {
+        //     // report
+        //   }
+        // }),
       ]),
       body: Column(
         children: [

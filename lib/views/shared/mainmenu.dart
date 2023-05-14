@@ -272,13 +272,73 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
             leading: const Icon(Icons.list_alt),
             title: const Text('Order List'),
             onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                  context,
-                  EnterExitRoute(
-                      exitPage: BuyerScreen(user: widget.user),
-                      enterPage: OrderListScreen(
-                          sellerId: widget.user.id.toString())));
+              if (widget.user.verify == 'no') {
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      shape: const RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(20.0))),
+                      title: const Text(
+                        "Please verify your account with MyKad first",
+                        textAlign: TextAlign.center,
+                      ),
+                      actions: <Widget>[
+                        Center(
+                          child: TextButton(
+                            child: const Text(
+                              "OK",
+                              style: TextStyle(),
+                            ),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              } else if (widget.user.verify == 'pending') {
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      shape: const RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(20.0))),
+                      title: const Text(
+                        "Please wait for the admin to approve your account verification",
+                        textAlign: TextAlign.center,
+                      ),
+                      actions: <Widget>[
+                        Center(
+                          child: TextButton(
+                            child: const Text(
+                              "OK",
+                              style: TextStyle(),
+                            ),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              } else {
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    EnterExitRoute(
+                        exitPage: BuyerScreen(user: widget.user),
+                        enterPage: OrderListScreen(
+                            sellerId: widget.user.id.toString())));
+              }
             },
           ),
           ListTile(

@@ -133,11 +133,21 @@ class _OrderListDetailScreenState extends State<OrderListDetailScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.chat), // whatsapp
-                          onPressed: _openWhatsApp,
-                          color: Colors.white,
-                        ),
+                        // IconButton(
+                        //   icon: const Icon(Icons.chat), // whatsapp
+                        //   onPressed: _openWhatsApp,
+                        //   color: Colors.white,
+                        // ),
+                        GestureDetector(
+                          onTap: _openWhatsApp,
+                          child: ClipOval(
+                            child: Image.asset(
+                              "assets/whatsapp.png",
+                              height: 40,
+                              width: 40,
+                            ),
+                          ),
+                        )
                       ],
                     ),
               const SizedBox(
