@@ -27,7 +27,7 @@ class OrderTimeModal extends StatefulWidget {
 }
 
 class _OrderTimeModalState extends State<OrderTimeModal> {
-  final List<String> _options = ['Tng ewallet', 'COD'];
+  final List<String> _options = ['COD'];
   final List<String> _time = [
     'now',
     'after 10 mins',

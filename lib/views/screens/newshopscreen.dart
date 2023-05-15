@@ -25,17 +25,17 @@ class _NewShopScreenState extends State<NewShopScreen> {
   final TextEditingController _snameEditingController = TextEditingController();
   final TextEditingController _sdescEditingController = TextEditingController();
   final TextEditingController _saddrEditingController = TextEditingController();
-  final TextEditingController _sbankaccEditingController =
-      TextEditingController();
+  // final TextEditingController _sbankaccEditingController =
+  //     TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  String selectBank = "Please select a Bank";
-  List<String> bankList = [
-    "Please select a Bank",
-    "Bank 1",
-    "Bank 2",
-    "Bank 3",
-    "MayBank",
-  ];
+  // String selectBank = "Please select a Bank";
+  // List<String> bankList = [
+  //   "Please select a Bank",
+  //   "Bank 1",
+  //   "Bank 2",
+  //   "Bank 3",
+  //   "MayBank",
+  // ];
 
   File? _image;
   final List<File> _imageList = [];
@@ -128,41 +128,41 @@ class _NewShopScreenState extends State<NewShopScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
-                  DropdownButtonFormField(
-                    value: selectBank,
-                    decoration: const InputDecoration(
-                        labelText: 'Bank',
-                        labelStyle: TextStyle(),
-                        icon: Icon(Icons.add_card),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(width: 2.0),
-                        )),
-                    onChanged: (newValue) {
-                      setState(() {
-                        selectBank = newValue.toString();
-                      });
-                    },
-                    items: bankList.map((selectBank) {
-                      return DropdownMenuItem(
-                          value: selectBank,
-                          child: Text(
-                            selectBank,
-                          ));
-                    }).toList(),
-                  ),
-                  TextFormField(
-                      textInputAction: TextInputAction.next,
-                      controller: _sbankaccEditingController,
-                      validator: (val) =>
-                          val!.isEmpty ? "Please enter bank account" : null,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                          labelText: 'Bank Account',
-                          labelStyle: TextStyle(),
-                          icon: Icon(Icons.add_card),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(width: 2.0),
-                          ))),
+                  // DropdownButtonFormField(
+                  //   value: selectBank,
+                  //   decoration: const InputDecoration(
+                  //       labelText: 'Bank',
+                  //       labelStyle: TextStyle(),
+                  //       icon: Icon(Icons.add_card),
+                  //       focusedBorder: OutlineInputBorder(
+                  //         borderSide: BorderSide(width: 2.0),
+                  //       )),
+                  //   onChanged: (newValue) {
+                  //     setState(() {
+                  //       selectBank = newValue.toString();
+                  //     });
+                  //   },
+                  //   items: bankList.map((selectBank) {
+                  //     return DropdownMenuItem(
+                  //         value: selectBank,
+                  //         child: Text(
+                  //           selectBank,
+                  //         ));
+                  //   }).toList(),
+                  // ),
+                  // TextFormField(
+                  //     textInputAction: TextInputAction.next,
+                  //     controller: _sbankaccEditingController,
+                  //     validator: (val) =>
+                  //         val!.isEmpty ? "Please enter bank account" : null,
+                  //     keyboardType: TextInputType.number,
+                  //     decoration: const InputDecoration(
+                  //         labelText: 'Bank Account',
+                  //         labelStyle: TextStyle(),
+                  //         icon: Icon(Icons.add_card),
+                  //         focusedBorder: OutlineInputBorder(
+                  //           borderSide: BorderSide(width: 2.0),
+                  //         ))),
                   TextFormField(
                       textInputAction: TextInputAction.next,
                       controller: _saddrEditingController,
@@ -227,15 +227,15 @@ class _NewShopScreenState extends State<NewShopScreen> {
           fontSize: 14.0);
       return;
     }
-    if (selectBank == "Please select a Bank") {
-      Fluttertoast.showToast(
-          msg: "Please select a Bank",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          fontSize: 14.0);
-      return;
-    }
+    // if (selectBank == "Please select a Bank") {
+    //   Fluttertoast.showToast(
+    //       msg: "Please select a Bank",
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.BOTTOM,
+    //       timeInSecForIosWeb: 1,
+    //       fontSize: 14.0);
+    //   return;
+    // }
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -419,7 +419,7 @@ class _NewShopScreenState extends State<NewShopScreen> {
   void insertShop() {
     String sname = _snameEditingController.text;
     String sdesc = _sdescEditingController.text;
-    String sbankacc = _sbankaccEditingController.text;
+    // String sbankacc = _sbankaccEditingController.text;
     String saddr = _saddrEditingController.text;
     List<String> base64Images = [];
     for (int i = 0; i < _imageList.length; i++) {
@@ -431,8 +431,10 @@ class _NewShopScreenState extends State<NewShopScreen> {
       "userid": widget.user.id,
       "sname": sname,
       "sdesc": sdesc,
-      "sbank": selectBank.toString(),
-      "sbankacc": sbankacc,
+      "sbank": "none",
+      // "sbank": selectBank.toString(),
+      // "sbankacc": sbankacc,
+      "sbankacc": "none",
       "saddr": saddr,
       "image": images,
       "registershop": "registershop"

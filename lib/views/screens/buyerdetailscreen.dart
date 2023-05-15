@@ -25,7 +25,7 @@ class _BuyerDetailScreenState extends State<BuyerDetailScreen> {
   final TextEditingController _sellernameController = TextEditingController();
   final TextEditingController _snameController = TextEditingController();
   final TextEditingController _sdescController = TextEditingController();
-  final TextEditingController _spriceController = TextEditingController();
+  // final TextEditingController _spriceController = TextEditingController();
   final TextEditingController _saddrController = TextEditingController();
   final TextEditingController _sbankaccController = TextEditingController();
 
@@ -137,16 +137,16 @@ class _BuyerDetailScreenState extends State<BuyerDetailScreen> {
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(width: 2.0),
                             ))),
-                    TextFormField(
-                        enabled: false,
-                        controller: _spriceController,
-                        decoration: const InputDecoration(
-                            labelText: 'Service Price Range',
-                            labelStyle: TextStyle(),
-                            icon: Icon(Icons.attach_money),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(width: 2.0),
-                            ))),
+                    // TextFormField(
+                    //     enabled: false,
+                    //     controller: _spriceController,
+                    //     decoration: const InputDecoration(
+                    //         labelText: 'Service Price Range',
+                    //         labelStyle: TextStyle(),
+                    //         icon: Icon(Icons.attach_money),
+                    //         focusedBorder: OutlineInputBorder(
+                    //           borderSide: BorderSide(width: 2.0),
+                    //         ))),
                     TextFormField(
                         enabled: false,
                         controller: _saddrController,
@@ -182,7 +182,7 @@ class _BuyerDetailScreenState extends State<BuyerDetailScreen> {
     _sellernameController.text = widget.seller.name.toString();
     _snameController.text = widget.shop.shopName.toString();
     _sdescController.text = widget.shop.shopDesc.toString();
-    _spriceController.text = "10 - 15"; // need to change
+    // _spriceController.text = "10 - 15"; // need to change
     _saddrController.text = widget.shop.shopAddress.toString();
     _sbankaccController.text = widget.shop.shopBankAcc.toString();
   }
