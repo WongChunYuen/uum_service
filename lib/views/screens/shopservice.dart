@@ -59,9 +59,12 @@ class _ShopServiceScreenState extends State<ShopServiceScreen> {
       ),
       body: serviceList.isEmpty
           ? Center(
+              child: RefreshIndicator(
+              onRefresh: refresh,
               child: Text(titlecenter,
                   style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold)))
+                      fontSize: 22, fontWeight: FontWeight.bold)),
+            ))
           : Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

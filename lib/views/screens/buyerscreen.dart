@@ -275,6 +275,8 @@ class _BuyerScreenState extends State<BuyerScreen> {
             titlecenter = "No service Available";
             shopList.clear();
           }
+        } else if (jsondata['status'] == 'noMore') {
+          hasMore = false;
         } else {
           titlecenter = "No service Available";
           shopList.clear();
