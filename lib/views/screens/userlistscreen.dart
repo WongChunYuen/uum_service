@@ -256,6 +256,8 @@ class _UserListScreenState extends State<UserListScreen> {
             titlecenter = "No user Available";
             userList.clear();
           }
+        } else if (jsondata['status'] == 'noMore') {
+          hasMore = false;
         } else {
           titlecenter = "No user Available";
           userList.clear();
