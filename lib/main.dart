@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       title: 'Homestay Raya',
       theme: ThemeData(
         primarySwatch: Colors.indigo,
-        textTheme: GoogleFonts.robotoTextTheme(
+        textTheme: GoogleFonts.robotoSlabTextTheme(
           Theme.of(context).textTheme.apply(),
         ),
       ),
