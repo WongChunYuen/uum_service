@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:intl/intl.dart';
 import '../../models/service.dart';
 import '../../models/user.dart';
 
@@ -40,6 +40,7 @@ class _OrderTimeModalState extends State<OrderTimeModal> {
   late double screenHeight, screenWidth, totalAmount;
   final TextEditingController _remarkEditingController =
       TextEditingController();
+  String currentDateTime = DateFormat.yMd().add_jm().format(DateTime.now());
 
   @override
   void initState() {
@@ -266,7 +267,8 @@ class _OrderTimeModalState extends State<OrderTimeModal> {
       'totalAmount': totalAmount.toStringAsFixed(2),
       'time': _selectedTime,
       'payment': _selectedPayment,
-      'remark': remark
+      'remark': remark,
+      'currentDateTime': currentDateTime
     };
 
     await order.add(orderData);

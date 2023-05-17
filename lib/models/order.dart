@@ -10,6 +10,7 @@ class MyOrder {
   String? time;
   String? payment;
   String? remark;
+  String? currentDateTime;
 
   MyOrder(
       {this.userId,
@@ -22,7 +23,8 @@ class MyOrder {
       this.totalAmount,
       this.time,
       this.payment,
-      this.remark});
+      this.remark,
+      this.currentDateTime});
 
   MyOrder.fromJson(Map<String, dynamic> json) {
     userId = json['userId'];
@@ -36,6 +38,7 @@ class MyOrder {
     time = json['time'];
     payment = json['payment'];
     remark = json['remark'];
+    currentDateTime = json['currentDateTime'];
   }
 
   Map<String, dynamic> toJson() {
@@ -51,6 +54,7 @@ class MyOrder {
     data['time'] = time;
     data['payment'] = payment;
     data['remark'] = remark;
+    data['currentDateTime'] = currentDateTime;
     return data;
   }
 }
