@@ -244,7 +244,7 @@ class _OrderListDetailScreenState extends State<OrderListDetailScreen> {
                         "Order date-time:",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -252,7 +252,7 @@ class _OrderListDetailScreenState extends State<OrderListDetailScreen> {
                         widget.order.currentDateTime.toString(),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -268,7 +268,7 @@ class _OrderListDetailScreenState extends State<OrderListDetailScreen> {
                         "Pick-up time:",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -276,7 +276,7 @@ class _OrderListDetailScreenState extends State<OrderListDetailScreen> {
                         widget.order.time.toString(),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -292,7 +292,7 @@ class _OrderListDetailScreenState extends State<OrderListDetailScreen> {
                         "Payment type:",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -300,7 +300,7 @@ class _OrderListDetailScreenState extends State<OrderListDetailScreen> {
                         widget.order.payment.toString(),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

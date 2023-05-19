@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../models/shop.dart';
 import '../../serverconfig.dart';
@@ -30,8 +31,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
   final TextEditingController _snameEditingController = TextEditingController();
   final TextEditingController _sdescEditingController = TextEditingController();
   final TextEditingController _saddrEditingController = TextEditingController();
-  // final TextEditingController _sbankaccEditingController =
-  //     TextEditingController();
+  final TextEditingController _sopenController = TextEditingController();
+  final TextEditingController _scloseController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   File? _image;
@@ -39,14 +40,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
   var pathAsset = "assets/images/camera.png";
   bool _editKey = false;
   late double screenHeight, screenWidth, resWidth;
-  // String selectBank = "";
-  // List<String> bankList = [
-  //   "Please select a Bank",
-  //   "Bank 1",
-  //   "Bank 2",
-  //   "Bank 3",
-  //   "MayBank",
-  // ];
+  TimeOfDay selectedOpenTime = TimeOfDay.now();
+  TimeOfDay selectedCloseTime = TimeOfDay.now();
+  
+  late String openTime, closeTime;
 
   @override
   void initState() {
@@ -65,6 +62,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
       resWidth = screenWidth * 0.90;
     }
     return Scaffold(
+        backgroundColor: Colors.grey[200],
         appBar: _editKey
             ? AppBar(title: const Text("Shop Details"))
             : AppBar(title: const Text("Shop Details"), actions: [
@@ -184,8 +182,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
                           labelText: 'Shop Name',
-                          labelStyle: TextStyle(),
-                          icon: Icon(Icons.home),
+                          labelStyle: TextStyle(
+                            color: Colors.blueGrey,
+                          ),
+                          icon: Icon(
+                            Icons.home,
+                            color: Colors.blueGrey,
+                          ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
@@ -201,81 +204,16 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       decoration: const InputDecoration(
                           labelText: 'Shop Description',
                           alignLabelWithHint: true,
-                          labelStyle: TextStyle(),
+                          labelStyle: TextStyle(
+                            color: Colors.blueGrey,
+                          ),
                           icon: Icon(
                             Icons.description,
+                            color: Colors.blueGrey,
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
-                  // TextFormField(
-                  //     enabled: _editKey,
-                  //     textInputAction: TextInputAction.next,
-                  //     controller: _spriceEditingController,
-                  //     validator: (val) =>
-                  //         val!.isEmpty ? "Please enter shop price" : null,
-                  //     keyboardType: TextInputType.number,
-                  //     decoration: const InputDecoration(
-                  //         labelText: 'Service Price/days',
-                  //         labelStyle: TextStyle(),
-                  //         icon: Icon(Icons.attach_money),
-                  //         focusedBorder: OutlineInputBorder(
-                  //           borderSide: BorderSide(width: 2.0),
-                  //         ))),
-                  // _editKey
-                  //     ? DropdownButtonFormField(
-                  //         value: selectBank,
-                  //         decoration: const InputDecoration(
-                  //             labelText: 'Bank',
-                  //             labelStyle: TextStyle(),
-                  //             icon: Icon(Icons.add_card),
-                  //             focusedBorder: OutlineInputBorder(
-                  //               borderSide: BorderSide(width: 2.0),
-                  //             )),
-                  //         onChanged: (newValue) {
-                  //           setState(() {
-                  //             selectBank = newValue.toString();
-                  //           });
-                  //         },
-                  //         items: bankList.map((selectBank) {
-                  //           return DropdownMenuItem(
-                  //               value: selectBank,
-                  //               child: Text(
-                  //                 selectBank,
-                  //               ));
-                  //         }).toList(),
-                  //       )
-                  //     : DropdownButtonFormField(
-                  //         value: selectBank,
-                  //         decoration: const InputDecoration(
-                  //             labelText: 'Bank',
-                  //             icon: Icon(Icons.add_card),
-                  //             focusedBorder: OutlineInputBorder(
-                  //               borderSide: BorderSide(width: 2.0),
-                  //             )),
-                  //         onChanged: null,
-                  //         items: bankList.map((selectBank) {
-                  //           return DropdownMenuItem(
-                  //               value: selectBank,
-                  //               child: Text(
-                  //                 selectBank,
-                  //               ));
-                  //         }).toList(),
-                  //       ),
-                  // TextFormField(
-                  //     enabled: _editKey,
-                  //     textInputAction: TextInputAction.next,
-                  //     controller: _sbankaccEditingController,
-                  //     validator: (val) =>
-                  //         val!.isEmpty ? "Please enter bank account" : null,
-                  //     keyboardType: TextInputType.number,
-                  //     decoration: const InputDecoration(
-                  //         labelText: 'Bank Account',
-                  //         labelStyle: TextStyle(),
-                  //         icon: Icon(Icons.add_card),
-                  //         focusedBorder: OutlineInputBorder(
-                  //           borderSide: BorderSide(width: 2.0),
-                  //         ))),
                   TextFormField(
                       enabled: _editKey,
                       textInputAction: TextInputAction.next,
@@ -285,11 +223,71 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
                           labelText: 'Shop Address',
-                          labelStyle: TextStyle(),
-                          icon: Icon(Icons.place),
+                          labelStyle: TextStyle(
+                            color: Colors.blueGrey,
+                          ),
+                          icon: Icon(
+                            Icons.place,
+                            color: Colors.blueGrey,
+                          ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Flexible(
+                        flex: 5,
+                        child: GestureDetector(
+                          onTap: () =>
+                              _editKey ? _selectOpenTime(context) : null,
+                          child: TextFormField(
+                              enabled: false,
+                              textInputAction: TextInputAction.next,
+                              controller: _sopenController,
+                              validator: (val) => val!.isEmpty
+                                  ? "Please enter shop open time"
+                                  : null,
+                              keyboardType: TextInputType.text,
+                              decoration: const InputDecoration(
+                                labelText: 'Open Time',
+                                labelStyle: TextStyle(
+                                  color: Colors.blueGrey,
+                                ),
+                                icon: Icon(
+                                  Icons.access_time,
+                                  color: Colors.blueGrey,
+                                ),
+                              )),
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text("-"),
+                      ),
+                      Flexible(
+                        flex: 5,
+                        child: GestureDetector(
+                          onTap: () =>
+                              _editKey ? _selectCloseTime(context) : null,
+                          child: TextFormField(
+                              enabled: false,
+                              textInputAction: TextInputAction.next,
+                              controller: _scloseController,
+                              validator: (val) => val!.isEmpty
+                                  ? "Please enter shop close time"
+                                  : null,
+                              keyboardType: TextInputType.text,
+                              decoration: const InputDecoration(
+                                labelText: 'Close Time',
+                                labelStyle: TextStyle(
+                                  color: Colors.blueGrey,
+                                ),
+                              )),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(
                     height: 12,
                   ),
@@ -357,6 +355,44 @@ class _DetailsScreenState extends State<DetailsScreen> {
             ),
           ]),
         ));
+  }
+
+  Future<void> _selectOpenTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: selectedOpenTime,
+    );
+
+    if (pickedTime != null && pickedTime != selectedOpenTime) {
+      setState(() {
+        selectedOpenTime = pickedTime;
+        openTime = _formatTime(selectedOpenTime);
+        _sopenController.text = openTime;
+      });
+    }
+  }
+
+  Future<void> _selectCloseTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: selectedCloseTime,
+    );
+
+    if (pickedTime != null && pickedTime != selectedCloseTime) {
+      setState(() {
+        selectedCloseTime = pickedTime;
+        closeTime = _formatTime(selectedCloseTime);
+        _scloseController.text = closeTime;
+      });
+    }
+  }
+
+  String _formatTime(TimeOfDay timeOfDay) {
+    final now = DateTime.now();
+    final dateTime = DateTime(
+        now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+    final formatter = DateFormat.jm();
+    return formatter.format(dateTime);
   }
 
   void _updateShopDialog() {
@@ -560,20 +596,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
   }
 
   void _updateShop() {
-    // if (selectBank == "Please select a Bank") {
-    //   Fluttertoast.showToast(
-    //       msg: "Please select a Bank",
-    //       toastLength: Toast.LENGTH_SHORT,
-    //       gravity: ToastGravity.BOTTOM,
-    //       timeInSecForIosWeb: 1,
-    //       fontSize: 14.0);
-    //   return;
-    // }
     String sname = _snameEditingController.text;
     String sdesc = _sdescEditingController.text;
     String saddr = _saddrEditingController.text;
-    // String sbank = selectBank;
-    // String sbankacc = _sbankaccEditingController.text;
+    String sopen = _sopenController.text;
+    String sclose = _scloseController.text;
     List<String> base64Images = [];
     for (int i = 0; i < _imageList.length; i++) {
       base64Images.add(base64Encode(_imageList[i].readAsBytesSync()));
@@ -586,10 +613,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
       "sname": sname,
       "sdesc": sdesc,
       "saddr": saddr,
-      "sbank": "none",
-      "sbankacc": "none",
-      // "sbank": sbank,
-      // "sbankacc": sbankacc,
+      "sopen": sopen,
+      "sclose": sclose,
       "image": images,
     }).then((response) {
       var data = jsonDecode(response.body);
@@ -603,9 +628,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
         _editKey = false;
         DefaultCacheManager manager = DefaultCacheManager();
         manager.emptyCache();
-        // setState(() {
-        //   selectBank = sbank;
-        // });
         return;
       } else {
         Fluttertoast.showToast(
@@ -696,8 +718,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
     _snameEditingController.text = widget.shop.shopName.toString();
     _sdescEditingController.text = widget.shop.shopDesc.toString();
     _saddrEditingController.text = widget.shop.shopAddress.toString();
-    // _sbankaccEditingController.text = widget.shop.shopBankAcc.toString();
-    // selectBank = widget.shop.shopBank.toString();
+    _sopenController.text = widget.shop.shopOpen.toString();
+    _scloseController.text = widget.shop.shopClose.toString();
   }
 
   Future<void> _loadImages() async {

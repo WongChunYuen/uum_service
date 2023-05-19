@@ -26,6 +26,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: Colors.grey[100],
+
       appBar: AppBar(
         title: const Text("Verify User"),
       ),

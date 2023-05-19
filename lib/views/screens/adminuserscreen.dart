@@ -64,6 +64,7 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
         return Future.value(false);
       },
       child: Scaffold(
+        backgroundColor: Colors.grey[200],
         appBar: widget.user.accstatus == "activate"
             ? AppBar(title: const Text("Profile"), actions: [
                 PopupMenuButton(itemBuilder: (context) {
@@ -143,8 +144,14 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
                           enabled: false,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
-                            icon: Icon(Icons.person),
+                            icon: Icon(
+                              Icons.person,
+                              color: Colors.blueGrey,
+                            ),
                             labelText: 'Name',
+                            labelStyle: TextStyle(
+                              color: Colors.blueGrey,
+                            ),
                           ),
                         ),
                         TextFormField(
@@ -152,8 +159,14 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
                           enabled: false,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
-                            icon: Icon(Icons.email),
+                            icon: Icon(
+                              Icons.email,
+                              color: Colors.blueGrey,
+                            ),
                             labelText: 'Email',
+                            labelStyle: TextStyle(
+                              color: Colors.blueGrey,
+                            ),
                           ),
                         ),
                         TextFormField(
@@ -161,8 +174,14 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
                           enabled: false,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
-                            icon: Icon(Icons.phone),
+                            icon: Icon(
+                              Icons.phone,
+                              color: Colors.blueGrey,
+                            ),
                             labelText: 'Phone',
+                            labelStyle: TextStyle(
+                              color: Colors.blueGrey,
+                            ),
                           ),
                         ),
                         TextFormField(
@@ -170,8 +189,14 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
                           enabled: false,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
-                            icon: Icon(Icons.location_on),
+                            icon: Icon(
+                              Icons.location_on,
+                              color: Colors.blueGrey,
+                            ),
                             labelText: 'Address',
+                            labelStyle: TextStyle(
+                              color: Colors.blueGrey,
+                            ),
                           ),
                         ),
                         TextFormField(
@@ -179,8 +204,14 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
                           enabled: false,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
-                            icon: Icon(Icons.date_range),
+                            icon: Icon(
+                              Icons.date_range,
+                              color: Colors.blueGrey,
+                            ),
                             labelText: 'Date register',
+                            labelStyle: TextStyle(
+                              color: Colors.blueGrey,
+                            ),
                           ),
                         ),
                         const SizedBox(

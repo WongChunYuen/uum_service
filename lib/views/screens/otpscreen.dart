@@ -45,80 +45,94 @@ class _OTPScreenState extends State<OTPScreen> {
         return Future.value(false);
       },
       child: Scaffold(
+        backgroundColor: Colors.grey[200],
         appBar: AppBar(
           title: const Text("OTP"),
         ),
-        body: Center(
-            child: SingleChildScrollView(
-                child: SizedBox(
-          width: cardwitdh,
-          child: Column(
-            children: [
-              Card(
-                  elevation: 8,
-                  margin: const EdgeInsets.all(8),
-                  child: Container(
-                      padding: const EdgeInsets.all(16),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(children: [
-                          const Text(
-                            "Enter OTP number",
-                            style: TextStyle(
-                              fontSize: 28,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          TextFormField(
-                              controller: _otpEditingController,
-                              keyboardType: TextInputType.number,
-                              validator: (val) => val!.isEmpty
-                                  ? "Please enter an OTP number"
-                                  : null,
-                              decoration: const InputDecoration(
-                                labelText: 'OTP number',
-                                labelStyle: TextStyle(),
-                                icon: Icon(Icons.system_security_update_good),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(width: 1.0),
-                                ),
-                              )),
-                          const SizedBox(
-                            height: 24,
-                          ),
-                          MaterialButton(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0)),
-                            minWidth: 115,
-                            height: 50,
-                            elevation: 10,
-                            onPressed: _submitOTP,
-                            color: Theme.of(context).colorScheme.primary,
-                            child: const Text(
-                              'Submit',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                        ]),
-                      ))),
-              const SizedBox(
-                height: 8,
-              ),
-              GestureDetector(
-                onTap: _sendOTP,
-                child: const Text(
-                  "Send OTP again",
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
-            ],
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/10.png'),
+              fit: BoxFit.cover,
+            ),
           ),
-        ))),
+          child: Center(
+              child: SingleChildScrollView(
+                  child: SizedBox(
+            width: cardwitdh,
+            child: Column(
+              children: [
+                Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    margin: const EdgeInsets.all(24),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(children: [
+                        const Text(
+                          "Enter OTP number",
+                          style: TextStyle(
+                            fontSize: 28,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        TextFormField(
+                            controller: _otpEditingController,
+                            keyboardType: TextInputType.number,
+                            validator: (val) => val!.isEmpty
+                                ? "Please enter an OTP number"
+                                : null,
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                            decoration: InputDecoration(
+                                labelText: 'OTP number',
+                                labelStyle: const TextStyle(
+                                  color: Colors.white,
+                                ),
+                                icon: const Icon(
+                                  Icons.system_security_update_good,
+                                  color: Colors.white,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.white, width: 1.0),
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ))),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        MaterialButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0)),
+                          minWidth: cardwitdh,
+                          height: 50,
+                          elevation: 10,
+                          onPressed: _submitOTP,
+                          color: Theme.of(context).colorScheme.primary,
+                          child: const Text(
+                            'Submit',
+                            style: TextStyle(color: Colors.white, fontSize: 25),
+                          ),
+                        ),
+                      ]),
+                    )),
+                const SizedBox(
+                  height: 8,
+                ),
+                GestureDetector(
+                  onTap: _sendOTP,
+                  child: const Text(
+                    "Send OTP again",
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ))),
+        ),
       ),
     );
   }

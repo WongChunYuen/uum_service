@@ -43,128 +43,169 @@ class _LoginScreenState extends State<LoginScreen> {
       cardwitdh = 400.00;
     }
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         title: const Text("Login"),
       ),
-      body: Center(
-          child: SingleChildScrollView(
-              child: SizedBox(
-        width: cardwitdh,
-        child: Column(
-          children: [
-            Card(
-                elevation: 8,
-                margin: const EdgeInsets.all(8),
-                child: Container(
-                    padding: const EdgeInsets.all(16),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(children: [
-                        const Text(
-                          "Login",
-                          style: TextStyle(
-                            fontSize: 32,
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/10.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+            child: SingleChildScrollView(
+                child: SizedBox(
+          width: cardwitdh,
+          child: Column(
+            children: [
+              Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  margin: const EdgeInsets.all(24),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(children: [
+                      const Text(
+                        "Login",
+                        style: TextStyle(
+                          fontSize: 32,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _emailEditingController,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        validator: (val) => val!.isEmpty ||
+                                !val.contains("@") ||
+                                !val.contains(".")
+                            ? "Enter a valid email"
+                            : null,
+                        style: const TextStyle(
+                          color: Colors.white,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          labelStyle: const TextStyle(
+                            color: Colors.white,
+                          ),
+                          icon: const Icon(
+                            Icons.email,
+                            color: Colors.white,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                color: Colors.white, width: 1.0),
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          hintText: 'Enter your email',
+                          hintStyle: const TextStyle(
+                            color: Colors.white,
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                            controller: _emailEditingController,
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.next,
-                            validator: (val) => val!.isEmpty ||
-                                    !val.contains("@") ||
-                                    !val.contains(".")
-                                ? "enter a valid email"
-                                : null,
-                            decoration: const InputDecoration(
-                                labelText: 'Email',
-                                labelStyle: TextStyle(),
-                                icon: Icon(Icons.email),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(width: 1.0),
-                                ))),
-                        TextFormField(
-                            controller: _passEditingController,
-                            keyboardType: TextInputType.visiblePassword,
-                            obscureText: true,
-                            decoration: const InputDecoration(
-                              labelText: 'Password',
-                              labelStyle: TextStyle(),
-                              icon: Icon(Icons.password),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(width: 1.0),
-                              ),
-                            )),
-                        const SizedBox(
-                          height: 8,
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      TextFormField(
+                        controller: _passEditingController,
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: true,
+                        style: const TextStyle(
+                          color: Colors.white,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Checkbox(
-                              value: _isChecked,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _isChecked = value!;
-                                });
-                              },
-                            ),
-                            Flexible(
-                              child: GestureDetector(
-                                onTap: null,
-                                child: const Text('Remember Me',
-                                    style: TextStyle(
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          labelStyle: const TextStyle(
+                            color: Colors.white,
+                          ),
+                          icon: const Icon(
+                            Icons.password,
+                            color: Colors.white,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                color: Colors.white, width: 1.0),
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          hintStyle: const TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Checkbox(
+                            value: _isChecked,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _isChecked = value!;
+                              });
+                            },
+                          ),
+                          Flexible(
+                            child: GestureDetector(
+                              onTap: null,
+                              child: const Text('Remember Me',
+                                  style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                    )),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        MaterialButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0)),
-                          minWidth: 115,
-                          height: 50,
-                          elevation: 10,
-                          onPressed: _loginUser,
-                          color: Theme.of(context).colorScheme.primary,
-                          child: const Text(
-                            'Login',
-                            style: TextStyle(
-                              color: Colors.white,
+                                      color: Colors.white)),
                             ),
                           ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      MaterialButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0)),
+                        minWidth: cardwitdh,
+                        height: 50,
+                        elevation: 10,
+                        onPressed: _loginUser,
+                        color: Theme.of(context).colorScheme.primary,
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(color: Colors.white, fontSize: 25),
                         ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                      ]),
-                    ))),
-            const SizedBox(
-              height: 12,
-            ),
-            GestureDetector(
-              onTap: _goRegister,
-              child: const Text(
-                "Register",
-                style: TextStyle(fontSize: 18),
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                    ]),
+                  )),
+              const SizedBox(
+                height: 12,
               ),
-            ),
-            const SizedBox(
-              height: 12,
-            ),
-            GestureDetector(
-              onTap: _forgotPassword,
-              child:
-                  const Text("Forgot Password", style: TextStyle(fontSize: 18)),
-            )
-          ],
-        ),
-      ))),
+              GestureDetector(
+                onTap: _goRegister,
+                child: const Text(
+                  "Don't have an account? Register now.",
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              GestureDetector(
+                onTap: _forgotPassword,
+                child: const Text("Forgot Password",
+                    style: TextStyle(fontSize: 18, color: Colors.white)),
+              )
+            ],
+          ),
+        ))),
+      ),
     );
   }
 
@@ -202,6 +243,14 @@ class _LoginScreenState extends State<LoginScreen> {
               MaterialPageRoute(builder: (content) => BuyerScreen(user: user)));
         }
         saveremovepref();
+      } else if (response.statusCode == 200 &&
+          jsonResponse['status'] == 'deactivate') {
+        Fluttertoast.showToast(
+            msg: "Your account is deactivated",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 14.0);
       } else {
         Fluttertoast.showToast(
             msg: "Login Failed",

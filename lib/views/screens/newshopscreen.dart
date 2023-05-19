@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import '../../models/user.dart';
 import '../../serverconfig.dart';
 import 'sellerscreeen.dart';
@@ -25,17 +26,14 @@ class _NewShopScreenState extends State<NewShopScreen> {
   final TextEditingController _snameEditingController = TextEditingController();
   final TextEditingController _sdescEditingController = TextEditingController();
   final TextEditingController _saddrEditingController = TextEditingController();
-  // final TextEditingController _sbankaccEditingController =
-  //     TextEditingController();
+  final TextEditingController _sotimeEditingController =
+      TextEditingController();
+  final TextEditingController _sctimeEditingController =
+      TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  // String selectBank = "Please select a Bank";
-  // List<String> bankList = [
-  //   "Please select a Bank",
-  //   "Bank 1",
-  //   "Bank 2",
-  //   "Bank 3",
-  //   "MayBank",
-  // ];
+  TimeOfDay selectedOpenTime = TimeOfDay.now();
+  TimeOfDay selectedCloseTime = TimeOfDay.now();
+  late String openTime, closeTime;
 
   File? _image;
   final List<File> _imageList = [];
@@ -43,6 +41,7 @@ class _NewShopScreenState extends State<NewShopScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.grey[200],
         appBar: AppBar(title: const Text("New Shop")),
         body: SingleChildScrollView(
           child: Column(children: [
@@ -73,7 +72,9 @@ class _NewShopScreenState extends State<NewShopScreen> {
                                       ? FileImage(_imageList[index])
                                           as ImageProvider
                                       : AssetImage(pathAsset),
-                                  fit: BoxFit.cover,
+                                  fit: _imageList.length > index
+                                      ? BoxFit.cover
+                                      : BoxFit.none,
                                 )),
                               ),
                             )),
@@ -105,8 +106,13 @@ class _NewShopScreenState extends State<NewShopScreen> {
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
                           labelText: 'Shop Name',
-                          labelStyle: TextStyle(),
-                          icon: Icon(Icons.home),
+                          labelStyle: TextStyle(
+                            color: Colors.blueGrey,
+                          ),
+                          icon: Icon(
+                            Icons.home,
+                            color: Colors.blueGrey,
+                          ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
@@ -121,48 +127,16 @@ class _NewShopScreenState extends State<NewShopScreen> {
                       decoration: const InputDecoration(
                           labelText: 'Shop Description',
                           alignLabelWithHint: true,
-                          labelStyle: TextStyle(),
+                          labelStyle: TextStyle(
+                            color: Colors.blueGrey,
+                          ),
                           icon: Icon(
                             Icons.description,
+                            color: Colors.blueGrey,
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
-                  // DropdownButtonFormField(
-                  //   value: selectBank,
-                  //   decoration: const InputDecoration(
-                  //       labelText: 'Bank',
-                  //       labelStyle: TextStyle(),
-                  //       icon: Icon(Icons.add_card),
-                  //       focusedBorder: OutlineInputBorder(
-                  //         borderSide: BorderSide(width: 2.0),
-                  //       )),
-                  //   onChanged: (newValue) {
-                  //     setState(() {
-                  //       selectBank = newValue.toString();
-                  //     });
-                  //   },
-                  //   items: bankList.map((selectBank) {
-                  //     return DropdownMenuItem(
-                  //         value: selectBank,
-                  //         child: Text(
-                  //           selectBank,
-                  //         ));
-                  //   }).toList(),
-                  // ),
-                  // TextFormField(
-                  //     textInputAction: TextInputAction.next,
-                  //     controller: _sbankaccEditingController,
-                  //     validator: (val) =>
-                  //         val!.isEmpty ? "Please enter bank account" : null,
-                  //     keyboardType: TextInputType.number,
-                  //     decoration: const InputDecoration(
-                  //         labelText: 'Bank Account',
-                  //         labelStyle: TextStyle(),
-                  //         icon: Icon(Icons.add_card),
-                  //         focusedBorder: OutlineInputBorder(
-                  //           borderSide: BorderSide(width: 2.0),
-                  //         ))),
                   TextFormField(
                       textInputAction: TextInputAction.next,
                       controller: _saddrEditingController,
@@ -171,11 +145,69 @@ class _NewShopScreenState extends State<NewShopScreen> {
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
                           labelText: 'Shop Address',
-                          labelStyle: TextStyle(),
-                          icon: Icon(Icons.place),
+                          labelStyle: TextStyle(
+                            color: Colors.blueGrey,
+                          ),
+                          icon: Icon(
+                            Icons.place,
+                            color: Colors.blueGrey,
+                          ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Flexible(
+                        flex: 5,
+                        child: GestureDetector(
+                          onTap: () => _selectOpenTime(context),
+                          child: TextFormField(
+                              enabled: false,
+                              textInputAction: TextInputAction.next,
+                              controller: _sotimeEditingController,
+                              validator: (val) => val!.isEmpty
+                                  ? "Please enter shop open time"
+                                  : null,
+                              keyboardType: TextInputType.text,
+                              decoration: const InputDecoration(
+                                labelText: 'Open Time',
+                                labelStyle: TextStyle(
+                                  color: Colors.blueGrey,
+                                ),
+                                icon: Icon(
+                                  Icons.access_time,
+                                  color: Colors.blueGrey,
+                                ),
+                              )),
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text("-"),
+                      ),
+                      Flexible(
+                        flex: 5,
+                        child: GestureDetector(
+                          onTap: () => _selectCloseTime(context),
+                          child: TextFormField(
+                              enabled: false,
+                              textInputAction: TextInputAction.next,
+                              controller: _sctimeEditingController,
+                              validator: (val) => val!.isEmpty
+                                  ? "Please enter shop close time"
+                                  : null,
+                              keyboardType: TextInputType.text,
+                              decoration: const InputDecoration(
+                                labelText: 'Close Time',
+                                labelStyle: TextStyle(
+                                  color: Colors.blueGrey,
+                                ),
+                              )),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(
                     height: 16,
                   ),
@@ -199,7 +231,52 @@ class _NewShopScreenState extends State<NewShopScreen> {
         ));
   }
 
+  Future<void> _selectOpenTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: selectedOpenTime,
+    );
+
+    if (pickedTime != null && pickedTime != selectedOpenTime) {
+      setState(() {
+        selectedOpenTime = pickedTime;
+        openTime = _formatTime(selectedOpenTime);
+        _sotimeEditingController.text = openTime;
+      });
+    }
+  }
+
+  Future<void> _selectCloseTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: selectedCloseTime,
+    );
+
+    if (pickedTime != null && pickedTime != selectedCloseTime) {
+      setState(() {
+        selectedCloseTime = pickedTime;
+        closeTime = _formatTime(selectedCloseTime);
+        _sctimeEditingController.text = closeTime;
+      });
+    }
+  }
+
+  String _formatTime(TimeOfDay timeOfDay) {
+    final now = DateTime.now();
+    final dateTime = DateTime(
+        now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+    final formatter = DateFormat.jm();
+    return formatter.format(dateTime);
+  }
+
   void _newShopDialog() {
+    TimeOfDay time1 = selectedOpenTime;
+    TimeOfDay time2 = selectedCloseTime;
+    DateTime dateTime1 = DateTime(DateTime.now().year, DateTime.now().month,
+        DateTime.now().day, time1.hour, time1.minute);
+    DateTime dateTime2 = DateTime(DateTime.now().year, DateTime.now().month,
+        DateTime.now().day, time2.hour, time2.minute);
+
     if (_imageList.isEmpty) {
       Fluttertoast.showToast(
           msg: "Please insert image",
@@ -227,15 +304,18 @@ class _NewShopScreenState extends State<NewShopScreen> {
           fontSize: 14.0);
       return;
     }
-    // if (selectBank == "Please select a Bank") {
-    //   Fluttertoast.showToast(
-    //       msg: "Please select a Bank",
-    //       toastLength: Toast.LENGTH_SHORT,
-    //       gravity: ToastGravity.BOTTOM,
-    //       timeInSecForIosWeb: 1,
-    //       fontSize: 14.0);
-    //   return;
-    // }
+    if (dateTime1.isAfter(dateTime2)) {
+      Fluttertoast.showToast(
+          msg: "Please ensure open time is before close time",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          fontSize: 14.0);
+      return;
+    }
+    print(time1);
+    print(openTime);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -419,8 +499,9 @@ class _NewShopScreenState extends State<NewShopScreen> {
   void insertShop() {
     String sname = _snameEditingController.text;
     String sdesc = _sdescEditingController.text;
-    // String sbankacc = _sbankaccEditingController.text;
     String saddr = _saddrEditingController.text;
+    String sopen = _sotimeEditingController.text;
+    String sclose = _sctimeEditingController.text;
     List<String> base64Images = [];
     for (int i = 0; i < _imageList.length; i++) {
       base64Images.add(base64Encode(_imageList[i].readAsBytesSync()));
@@ -431,10 +512,8 @@ class _NewShopScreenState extends State<NewShopScreen> {
       "userid": widget.user.id,
       "sname": sname,
       "sdesc": sdesc,
-      "sbank": "none",
-      // "sbank": selectBank.toString(),
-      // "sbankacc": sbankacc,
-      "sbankacc": "none",
+      "sopen": sopen,
+      "sclose": sclose,
       "saddr": saddr,
       "image": images,
       "registershop": "registershop"
@@ -448,7 +527,6 @@ class _NewShopScreenState extends State<NewShopScreen> {
             timeInSecForIosWeb: 1,
             fontSize: 14.0);
         Navigator.of(context).pop();
-
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(

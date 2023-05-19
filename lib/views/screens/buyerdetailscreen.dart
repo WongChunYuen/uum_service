@@ -27,7 +27,8 @@ class _BuyerDetailScreenState extends State<BuyerDetailScreen> {
   final TextEditingController _sdescController = TextEditingController();
   // final TextEditingController _spriceController = TextEditingController();
   final TextEditingController _saddrController = TextEditingController();
-  final TextEditingController _sbankaccController = TextEditingController();
+  final TextEditingController _sopenController = TextEditingController();
+  final TextEditingController _scloseController = TextEditingController();
 
   @override
   void initState() {
@@ -46,17 +47,17 @@ class _BuyerDetailScreenState extends State<BuyerDetailScreen> {
       resWidth = screenWidth * 0.90;
     }
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(title: const Text("Details"), actions: [
-        // IconButton(
-        //   icon: const Icon(Icons.chat), // whatsapp
-        //   onPressed: _openWhatsApp,
-        // ),
         GestureDetector(
           onTap: _openWhatsApp,
-          child: Image.asset(
-            "assets/whatsapp.png",
-            height: 30,
-            width: 30,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 10.0),
+            child: Image.asset(
+              "assets/whatsapp.png",
+              height: 30,
+              width: 30,
+            ),
           ),
         ),
         // PopupMenuButton(itemBuilder: (context) {
@@ -125,18 +126,23 @@ class _BuyerDetailScreenState extends State<BuyerDetailScreen> {
                       ),
                     ),
                     TextFormField(
-                        enabled: false,
-                        controller: _sdescController,
-                        decoration: const InputDecoration(
-                            labelText: 'Shop Description',
-                            alignLabelWithHint: true,
-                            labelStyle: TextStyle(),
-                            icon: Icon(
-                              Icons.description,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(width: 2.0),
-                            ))),
+                      enabled: false,
+                      controller: _sdescController,
+                      decoration: const InputDecoration(
+                        labelText: 'Shop Description',
+                        alignLabelWithHint: true,
+                        labelStyle: TextStyle(
+                          color: Colors.blueGrey,
+                        ),
+                        icon: Icon(
+                          Icons.description,
+                          color: Colors.blueGrey,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(width: 2.0),
+                        ),
+                      ),
+                    ),
                     // TextFormField(
                     //     enabled: false,
                     //     controller: _spriceController,
@@ -152,18 +158,65 @@ class _BuyerDetailScreenState extends State<BuyerDetailScreen> {
                         controller: _saddrController,
                         decoration: const InputDecoration(
                             labelText: 'Shop Address',
-                            labelStyle: TextStyle(),
-                            icon: Icon(Icons.place),
+                            labelStyle: TextStyle(
+                              color: Colors.blueGrey,
+                            ),
+                            icon: Icon(
+                              Icons.place,
+                              color: Colors.blueGrey,
+                            ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(width: 2.0),
                             ))),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Flexible(
+                          flex: 5,
+                          child: TextFormField(
+                              enabled: false,
+                              controller: _sopenController,
+                              decoration: const InputDecoration(
+                                labelText: 'Open Time',
+                                labelStyle: TextStyle(
+                                  color: Colors.blueGrey,
+                                ),
+                                icon: Icon(
+                                  Icons.access_time,
+                                  color: Colors.blueGrey,
+                                ),
+                              )),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text("-"),
+                        ),
+                        Flexible(
+                          flex: 5,
+                          child: TextFormField(
+                              enabled: false,
+                              controller: _scloseController,
+                              decoration: const InputDecoration(
+                                labelText: 'Close Time',
+                                labelStyle: TextStyle(
+                                  color: Colors.blueGrey,
+                                ),
+                              )),
+                        ),
+                      ],
+                    ),
                     TextFormField(
                         enabled: false,
                         controller: _sellernameController,
                         decoration: const InputDecoration(
                             labelText: 'Owner Name',
-                            labelStyle: TextStyle(),
-                            icon: Icon(Icons.person),
+                            labelStyle: TextStyle(
+                              color: Colors.blueGrey,
+                            ),
+                            icon: Icon(
+                              Icons.person,
+                              color: Colors.blueGrey,
+                            ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(width: 2.0),
                             ))),
@@ -184,7 +237,8 @@ class _BuyerDetailScreenState extends State<BuyerDetailScreen> {
     _sdescController.text = widget.shop.shopDesc.toString();
     // _spriceController.text = "10 - 15"; // need to change
     _saddrController.text = widget.shop.shopAddress.toString();
-    _sbankaccController.text = widget.shop.shopBankAcc.toString();
+    _sopenController.text = widget.shop.shopOpen.toString();
+    _scloseController.text = widget.shop.shopClose.toString();
   }
 
   Future<void> _loadImages() async {
@@ -237,24 +291,21 @@ class _BuyerDetailScreenState extends State<BuyerDetailScreen> {
       return Expanded(
         child: Align(
           alignment: FractionalOffset.bottomCenter,
-          child: Card(
-            child: SizedBox(
-              child: Container(
-                alignment: Alignment.bottomCenter,
-                padding: const EdgeInsets.all(16),
-                child: MaterialButton(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5.0)),
-                  minWidth: screenWidth,
-                  height: 50,
-                  elevation: 10,
-                  onPressed: _orderDetails,
-                  color: Theme.of(context).colorScheme.primary,
-                  child: const Text(
-                    'Order',
-                    style: TextStyle(color: Colors.white, fontSize: 23),
-                  ),
-                ),
+          child: Container(
+            color: Colors.transparent,
+            alignment: Alignment.bottomCenter,
+            padding: const EdgeInsets.all(16),
+            child: MaterialButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0)),
+              minWidth: screenWidth,
+              height: 50,
+              elevation: 10,
+              onPressed: _orderDetails,
+              color: Theme.of(context).colorScheme.primary,
+              child: const Text(
+                'Order',
+                style: TextStyle(color: Colors.white, fontSize: 23),
               ),
             ),
           ),

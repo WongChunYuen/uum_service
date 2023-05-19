@@ -32,174 +32,259 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _passwordVisible = true;
   final _formKey = GlobalKey<FormState>();
   String eula = "";
+  var screenHeight, screenWidth, cardwitdh;
 
   @override
   Widget build(BuildContext context) {
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth <= 600) {
+      cardwitdh = screenWidth;
+    } else {
+      cardwitdh = 400.00;
+    }
     return Scaffold(
+        backgroundColor: Colors.grey[200],
         appBar: AppBar(title: const Text("Register")),
-        body: Center(
-            child: SingleChildScrollView(
-          child: Card(
-            elevation: 8,
-            margin: const EdgeInsets.all(8),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                key: _formKey,
-                child: Column(children: [
-                  const Text(
-                    "Register",
-                    style: TextStyle(
-                      fontSize: 32,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    "Weolcome to UUM Service",
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                      controller: _nameEditingController,
-                      keyboardType: TextInputType.text,
-                      validator: (val) => val!.isEmpty || (val.length < 3)
-                          ? "Name must be longer than 3"
-                          : null,
-                      decoration: const InputDecoration(
-                          labelText: 'Name',
-                          labelStyle: TextStyle(),
-                          icon: Icon(Icons.person),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(width: 1.0),
-                          ))),
-                  TextFormField(
-                      controller: _emailEditingController,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (val) => val!.isEmpty ||
-                              !val.contains("@") ||
-                              !val.contains(".")
-                          ? "Enter a valid email"
-                          : null,
-                      decoration: const InputDecoration(
-                          labelText: 'Email',
-                          labelStyle: TextStyle(),
-                          icon: Icon(Icons.email),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(width: 1.0),
-                          ))),
-                  TextFormField(
-                      controller: _phoneEditingController,
-                      validator: (val) => val!.isEmpty || (val.length < 10)
-                          ? "Please enter valid phone number"
-                          : null,
-                      keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                          labelText: 'Phone',
-                          labelStyle: TextStyle(),
-                          icon: Icon(Icons.phone),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(width: 1.0),
-                          ))),
-                  TextFormField(
-                      controller: _passEditingController,
-                      keyboardType: TextInputType.visiblePassword,
-                      validator: (val) => validatePassword(val.toString()),
-                      obscureText: _passwordVisible,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        labelStyle: const TextStyle(),
-                        icon: const Icon(Icons.password),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(width: 1.0),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _passwordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _passwordVisible = !_passwordVisible;
-                            });
-                          },
-                        ),
-                      )),
-                  TextFormField(
-                      controller: _pass2EditingController,
-                      keyboardType: TextInputType.visiblePassword,
-                      obscureText: _passwordVisible,
-                      decoration: InputDecoration(
-                        labelText: 'Re-Password',
-                        labelStyle: const TextStyle(),
-                        icon: const Icon(Icons.password),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(width: 1.0),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _passwordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _passwordVisible = !_passwordVisible;
-                            });
-                          },
-                        ),
-                      )),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Checkbox(
-                        value: _isChecked,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _isChecked = value!;
-                          });
-                        },
-                      ),
-                      Flexible(
-                        child: GestureDetector(
-                          onTap: showEula,
-                          child: const Text('Agree to our Terms & Conditions',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              )),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  MaterialButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5.0)),
-                    minWidth: 115,
-                    height: 50,
-                    elevation: 10,
-                    onPressed: _registerAccountDialog,
-                    color: Theme.of(context).colorScheme.primary,
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ]),
-              ),
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/10.png'),
+              fit: BoxFit.cover,
             ),
           ),
-        )));
+          child: Center(
+              child: SingleChildScrollView(
+            child: SizedBox(
+              width: cardwitdh,
+              child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  margin: const EdgeInsets.all(24),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        const Text(
+                          "Register",
+                          style: TextStyle(
+                            fontSize: 32,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        const Text(
+                          "Welcome to UUM Service",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _nameEditingController,
+                          keyboardType: TextInputType.text,
+                          validator: (val) => val!.isEmpty || (val.length < 3)
+                              ? "Name must be longer than 3"
+                              : null,
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'Name',
+                            labelStyle: const TextStyle(
+                              color: Colors.white,
+                            ),
+                            icon: const Icon(
+                              Icons.person,
+                              color: Colors.white,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1.0, color: Colors.white),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        TextFormField(
+                          controller: _emailEditingController,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (val) => val!.isEmpty ||
+                                  !val.contains("@") ||
+                                  !val.contains(".")
+                              ? "Enter a valid email"
+                              : null,
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            labelStyle: const TextStyle(
+                              color: Colors.white,
+                            ),
+                            icon: const Icon(
+                              Icons.email,
+                              color: Colors.white,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1.0, color: Colors.white),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _phoneEditingController,
+                          validator: (val) => val!.isEmpty || (val.length < 10)
+                              ? "Please enter a valid phone number"
+                              : null,
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                          keyboardType: TextInputType.phone,
+                          decoration: InputDecoration(
+                            labelText: 'Phone',
+                            labelStyle: const TextStyle(
+                              color: Colors.white,
+                            ),
+                            icon: const Icon(
+                              Icons.phone,
+                              color: Colors.white,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1.0, color: Colors.white),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _passEditingController,
+                          keyboardType: TextInputType.visiblePassword,
+                          validator: (val) => validatePassword(val.toString()),
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                          obscureText: _passwordVisible,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            labelStyle: const TextStyle(
+                              color: Colors.white,
+                            ),
+                            icon: const Icon(
+                              Icons.password,
+                              color: Colors.white,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1.0, color: Colors.white),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _passwordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _pass2EditingController,
+                          keyboardType: TextInputType.visiblePassword,
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                          obscureText: _passwordVisible,
+                          decoration: InputDecoration(
+                            labelText: 'Confirm Password',
+                            labelStyle: const TextStyle(
+                              color: Colors.white,
+                            ),
+                            icon: const Icon(
+                              Icons.password,
+                              color: Colors.white,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1.0, color: Colors.white),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _passwordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Checkbox(
+                              value: _isChecked,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isChecked = value!;
+                                });
+                              },
+                            ),
+                            Flexible(
+                              child: GestureDetector(
+                                onTap: showEula,
+                                child: const Text(
+                                  'Agree to our Terms & Conditions',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        MaterialButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0)),
+                          minWidth: cardwitdh,
+                          height: 50,
+                          elevation: 10,
+                          onPressed: _registerAccountDialog,
+                          color: Theme.of(context).colorScheme.primary,
+                          child: const Text(
+                            'Register',
+                            style: TextStyle(color: Colors.white, fontSize: 25),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+            ),
+          )),
+        ));
   }
 
   // Method that validate the password field

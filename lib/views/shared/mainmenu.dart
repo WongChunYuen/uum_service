@@ -33,6 +33,7 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
     return Drawer(
       width: 250,
       elevation: 10,
+      backgroundColor: Colors.grey[200],
       child: verifyLogin(),
     );
   }
@@ -51,7 +52,10 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
           ),
         ),
         ListTile(
-          leading: const Icon(Icons.account_circle_rounded),
+          leading: const Icon(
+            Icons.account_circle_rounded,
+            color: Colors.blueGrey,
+          ),
           title: const Text('Login'),
           onTap: () {
             Navigator.pop(context);
@@ -115,7 +119,10 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
                   ),
                 ),
           ListTile(
-            leading: const Icon(Icons.account_circle_rounded),
+            leading: const Icon(
+              Icons.account_circle_rounded,
+              color: Colors.blueGrey,
+            ),
             title: const Text('Profile'),
             onTap: () {
               Navigator.pop(context);
@@ -141,7 +148,10 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
           //   },
           // ),
           ListTile(
-            leading: const Icon(Icons.logout),
+            leading: const Icon(
+              Icons.logout,
+              color: Colors.blueGrey,
+            ),
             title: const Text('Log out'),
             onTap: () {
               Navigator.pop(context);
@@ -185,7 +195,10 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
                   ),
                 ),
           ListTile(
-            leading: const Icon(Icons.account_circle_rounded),
+            leading: const Icon(
+              Icons.account_circle_rounded,
+              color: Colors.blueGrey,
+            ),
             title: const Text('Profile'),
             onTap: () {
               Navigator.pop(context);
@@ -197,7 +210,10 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.sell),
+            leading: const Icon(
+              Icons.sell,
+              color: Colors.blueGrey,
+            ),
             title: const Text('Seller'),
             onTap: () {
               if (widget.user.verify == 'no') {
@@ -269,7 +285,10 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.list_alt),
+            leading: const Icon(
+              Icons.list_alt,
+              color: Colors.blueGrey,
+            ),
             title: const Text('Order List'),
             onTap: () {
               if (widget.user.verify == 'no') {
@@ -342,7 +361,10 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.history),
+            leading: const Icon(
+              Icons.history,
+              color: Colors.blueGrey,
+            ),
             title: const Text('Order History'),
             onTap: () {
               Navigator.pop(context);
@@ -369,7 +391,10 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
           //   },
           // ),
           ListTile(
-            leading: const Icon(Icons.logout),
+            leading: const Icon(
+              Icons.logout,
+              color: Colors.blueGrey,
+            ),
             title: const Text('Log out'),
             onTap: () {
               Navigator.pop(context);

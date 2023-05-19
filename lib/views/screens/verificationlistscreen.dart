@@ -65,6 +65,7 @@ class _VerificationListScreenState extends State<VerificationListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text("Verification List"),
         actions: [
@@ -134,14 +135,22 @@ class _VerificationListScreenState extends State<VerificationListScreen> {
                     index: index),
           );
         } else {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24),
-            child: Center(
-              child: hasMore
-                  ? const CircularProgressIndicator()
-                  : const Text("No more users"),
-            ),
-          );
+          return hasMore
+              ? const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 18),
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              : const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Center(
+                    child: Text(
+                      "No more users",
+                      style: TextStyle(
+                          // color: Colors.white,
+                          fontSize: 18),
+                    ),
+                  ),
+                );
         }
       },
     );

@@ -26,9 +26,10 @@ class _AdminDetailScreenState extends State<AdminDetailScreen> {
   final TextEditingController _sellernameController = TextEditingController();
   final TextEditingController _snameController = TextEditingController();
   final TextEditingController _sdescController = TextEditingController();
-  final TextEditingController _spriceController = TextEditingController();
+  // final TextEditingController _spriceController = TextEditingController();
   final TextEditingController _saddrController = TextEditingController();
-  final TextEditingController _sbankaccController = TextEditingController();
+  final TextEditingController _sopenController = TextEditingController();
+  final TextEditingController _scloseController = TextEditingController();
 
   @override
   void initState() {
@@ -47,6 +48,7 @@ class _AdminDetailScreenState extends State<AdminDetailScreen> {
       resWidth = screenWidth * 0.90;
     }
     return Scaffold(
+        backgroundColor: Colors.grey[200],
         appBar: AppBar(title: const Text("Details"), actions: [
           PopupMenuButton(itemBuilder: (context) {
             return [
@@ -113,9 +115,12 @@ class _AdminDetailScreenState extends State<AdminDetailScreen> {
                       decoration: const InputDecoration(
                           labelText: 'Service Description',
                           alignLabelWithHint: true,
-                          labelStyle: TextStyle(),
+                          labelStyle: TextStyle(
+                            color: Colors.blueGrey,
+                          ),
                           icon: Icon(
                             Icons.description,
+                            color: Colors.blueGrey,
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
@@ -125,18 +130,65 @@ class _AdminDetailScreenState extends State<AdminDetailScreen> {
                       controller: _saddrController,
                       decoration: const InputDecoration(
                           labelText: 'Service Address',
-                          labelStyle: TextStyle(),
-                          icon: Icon(Icons.place),
+                          labelStyle: TextStyle(
+                            color: Colors.blueGrey,
+                          ),
+                          icon: Icon(
+                            Icons.place,
+                            color: Colors.blueGrey,
+                          ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Flexible(
+                        flex: 5,
+                        child: TextFormField(
+                            enabled: false,
+                            controller: _sopenController,
+                            decoration: const InputDecoration(
+                              labelText: 'Open Time',
+                              labelStyle: TextStyle(
+                                color: Colors.blueGrey,
+                              ),
+                              icon: Icon(
+                                Icons.access_time,
+                                color: Colors.blueGrey,
+                              ),
+                            )),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text("-"),
+                      ),
+                      Flexible(
+                        flex: 5,
+                        child: TextFormField(
+                            enabled: false,
+                            controller: _scloseController,
+                            decoration: const InputDecoration(
+                              labelText: 'Close Time',
+                              labelStyle: TextStyle(
+                                color: Colors.blueGrey,
+                              ),
+                            )),
+                      ),
+                    ],
+                  ),
                   TextFormField(
                       enabled: false,
                       controller: _sellernameController,
                       decoration: const InputDecoration(
                           labelText: 'Owner Name',
-                          labelStyle: TextStyle(),
-                          icon: Icon(Icons.person),
+                          labelStyle: TextStyle(
+                            color: Colors.blueGrey,
+                          ),
+                          icon: Icon(
+                            Icons.person,
+                            color: Colors.blueGrey,
+                          ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(width: 2.0),
                           ))),
@@ -174,9 +226,10 @@ class _AdminDetailScreenState extends State<AdminDetailScreen> {
     _sellernameController.text = widget.seller.name.toString();
     _snameController.text = widget.shop.shopName.toString();
     _sdescController.text = widget.shop.shopDesc.toString();
-    _spriceController.text = "10 - 15"; // need to change
+    // _spriceController.text = "10 - 15";
     _saddrController.text = widget.shop.shopAddress.toString();
-    _sbankaccController.text = widget.shop.shopBankAcc.toString();
+    _sopenController.text = widget.shop.shopOpen.toString();
+    _scloseController.text = widget.shop.shopClose.toString();
   }
 
   Future<void> _loadImages() async {

@@ -37,33 +37,39 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Container(
-          color: Colors.white.withOpacity(0.7),
-          child: TextField(
-            autofocus: true,
-            controller: searchController,
-            decoration: InputDecoration(
-              hintText: "Search",
-              border: InputBorder.none,
-              hintStyle: const TextStyle(color: Colors.grey),
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () {
-                  search = searchController.text;
-                  if (search != "") {
-                    _loadUsers(search, 1);
-                  }
-                },
+        title: ClipRRect(
+          borderRadius: BorderRadius.circular(20.0),
+          child: Container(
+            color: Colors.white.withOpacity(0.7),
+            child: TextField(
+              autofocus: true,
+              controller: searchController,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 16.0),
+                hintText: "Search User",
+                border: InputBorder.none,
+                hintStyle: const TextStyle(color: Colors.grey),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    search = searchController.text;
+                    if (search != "") {
+                      _loadUsers(search, 1);
+                    }
+                  },
+                ),
               ),
+              textInputAction: TextInputAction.search,
+              onSubmitted: (value) {
+                search = searchController.text;
+                if (search != "") {
+                  _loadUsers(search, 1);
+                }
+              },
             ),
-            textInputAction: TextInputAction.search,
-            onSubmitted: (value) {
-              search = searchController.text;
-              if (search != "") {
-                _loadUsers(search, 1);
-              }
-            },
           ),
         ),
       ),

@@ -39,33 +39,39 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: Container(
-          color: Colors.white.withOpacity(0.7),
-          child: TextField(
-            autofocus: true,
-            controller: searchController,
-            decoration: InputDecoration(
-              hintText: "Search",
-              border: InputBorder.none,
-              hintStyle: const TextStyle(color: Colors.grey),
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () {
-                  search = searchController.text;
-                  if (search != "") {
-                    _loadShops(search, 1);
-                  }
-                },
+        title: ClipRRect(
+          borderRadius: BorderRadius.circular(20.0),
+          child: Container(
+            color: Colors.white.withOpacity(0.7),
+            child: TextField(
+              autofocus: true,
+              controller: searchController,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 16.0),
+                hintText: "Search Service",
+                border: InputBorder.none,
+                hintStyle: const TextStyle(color: Colors.grey),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    search = searchController.text;
+                    if (search != "") {
+                      _loadShops(search, 1);
+                    }
+                  },
+                ),
               ),
+              textInputAction: TextInputAction.search,
+              onSubmitted: (value) {
+                search = searchController.text;
+                if (search != "") {
+                  _loadShops(search, 1);
+                }
+              },
             ),
-            textInputAction: TextInputAction.search,
-            onSubmitted: (value) {
-              search = searchController.text;
-              if (search != "") {
-                _loadShops(search, 1);
-              }
-            },
           ),
         ),
       ),
@@ -83,7 +89,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.only(top: 8, bottom: 3),
                       child: Text(
                         "Services ($numberofresult found)",
                         style: const TextStyle(
@@ -128,18 +134,36 @@ class _SearchScreenState extends State<SearchScreen> {
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: SizedBox(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 4,
+              offset: const Offset(0, 2), // changes position of shadow
+            ),
+          ],
+        ),
         height: 120,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             AspectRatio(
               aspectRatio: 1.0,
-              child: thumbnail,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(8),
+                  topLeft: Radius.circular(8),
+                ),
+                child: thumbnail,
+              ),
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20.0, 0.0, 2.0, 0.0),
+                padding: const EdgeInsets.fromLTRB(20.0, 10.0, 2.0, 0.0),
                 child: _articleDescription(
                   title: title,
                   subtitle: subtitle,

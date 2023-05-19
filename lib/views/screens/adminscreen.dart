@@ -18,6 +18,7 @@ class _AdminScreenState extends State<AdminScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         title: const Text("Admin Panel"),
       ),
@@ -45,7 +46,9 @@ class _AdminScreenState extends State<AdminScreen> {
                         Text(
                           'User List',
                           style: TextStyle(
-                              fontSize: 25, fontWeight: FontWeight.bold),
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -75,7 +78,9 @@ class _AdminScreenState extends State<AdminScreen> {
                         Text(
                           'Service List',
                           style: TextStyle(
-                              fontSize: 25, fontWeight: FontWeight.bold),
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -104,7 +109,9 @@ class _AdminScreenState extends State<AdminScreen> {
                         Text(
                           'Verification List',
                           style: TextStyle(
-                              fontSize: 25, fontWeight: FontWeight.bold),
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                           textAlign: TextAlign.center,
                         ),
                       ],

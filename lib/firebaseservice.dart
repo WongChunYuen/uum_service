@@ -13,17 +13,17 @@ class FirebaseService {
 
     // Initialize Firestore listener
     _db.collection('orders').snapshots().listen((querySnapshot) {
-      querySnapshot.docChanges.forEach((change) {
+      for (var change in querySnapshot.docChanges) {
         if (change.type == DocumentChangeType.added) {
           final data = change.doc.data();
-          final title = 'New Order';
+          const title = 'New Order';
           final body =
               'A new order has been placed by ${data!['customerName']}';
 
           // Send a push notification
           _sendPushNotification(title, body);
         }
-      });
+      }
     });
   }
 

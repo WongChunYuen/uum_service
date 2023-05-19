@@ -61,7 +61,7 @@ class _OrderHistoryDetailScreenState extends State<OrderHistoryDetailScreen> {
                 child: Text(
                   'Thank You for your order!',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -265,7 +265,7 @@ class _OrderHistoryDetailScreenState extends State<OrderHistoryDetailScreen> {
                         "Order date-time:",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -273,7 +273,7 @@ class _OrderHistoryDetailScreenState extends State<OrderHistoryDetailScreen> {
                         widget.order.currentDateTime.toString(),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -289,7 +289,7 @@ class _OrderHistoryDetailScreenState extends State<OrderHistoryDetailScreen> {
                         "Pick-up time:",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -297,7 +297,7 @@ class _OrderHistoryDetailScreenState extends State<OrderHistoryDetailScreen> {
                         widget.order.time.toString(),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -313,7 +313,7 @@ class _OrderHistoryDetailScreenState extends State<OrderHistoryDetailScreen> {
                         "Payment type:",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -321,7 +321,7 @@ class _OrderHistoryDetailScreenState extends State<OrderHistoryDetailScreen> {
                         widget.order.payment.toString(),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

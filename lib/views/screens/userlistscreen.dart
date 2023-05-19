@@ -63,6 +63,7 @@ class _UserListScreenState extends State<UserListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text("User List"),
         actions: [
@@ -132,14 +133,22 @@ class _UserListScreenState extends State<UserListScreen> {
                     index: index),
           );
         } else {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24),
-            child: Center(
-              child: hasMore
-                  ? const CircularProgressIndicator()
-                  : const Text("No more users"),
-            ),
-          );
+          return hasMore
+              ? const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 18),
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              : const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Center(
+                    child: Text(
+                      "No more users",
+                      style: TextStyle(
+                          // color: Colors.white,
+                          fontSize: 18),
+                    ),
+                  ),
+                );
         }
       },
     );
@@ -153,7 +162,8 @@ class _UserListScreenState extends State<UserListScreen> {
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: SizedBox(
+      child: Container(
+        color: userList[index].accstatus == "deactivate" ? Colors.grey : null,
         height: 60,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,

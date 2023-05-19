@@ -28,71 +28,89 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       cardwitdh = 400.00;
     }
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         title: const Text("Forgot Password"),
       ),
-      body: Center(
-          child: SingleChildScrollView(
-              child: SizedBox(
-        width: cardwitdh,
-        child: Column(
-          children: [
-            Card(
-                elevation: 8,
-                margin: const EdgeInsets.all(8),
-                child: Container(
-                    padding: const EdgeInsets.all(16),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(children: [
-                        const Text(
-                          "Find Email",
-                          style: TextStyle(
-                            fontSize: 32,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                            controller: _emailEditingController,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (val) => val!.isEmpty ||
-                                    !val.contains("@") ||
-                                    !val.contains(".")
-                                ? "enter a valid email"
-                                : null,
-                            decoration: const InputDecoration(
-                                labelText: 'Email',
-                                labelStyle: TextStyle(),
-                                icon: Icon(Icons.email),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(width: 1.0),
-                                ))),
-                        const SizedBox(
-                          height: 24,
-                        ),
-                        MaterialButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0)),
-                          minWidth: 115,
-                          height: 50,
-                          elevation: 10,
-                          onPressed: _findUser,
-                          color: Theme.of(context).colorScheme.primary,
-                          child: const Text(
-                            'Submit',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                      ]),
-                    ))),
-          ],
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/10.png'),
+            fit: BoxFit.cover,
+          ),
         ),
-      ))),
+        child: Center(
+            child: SingleChildScrollView(
+                child: SizedBox(
+          width: cardwitdh,
+          child: Column(
+            children: [
+              Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  margin: const EdgeInsets.all(24),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(children: [
+                      const Text(
+                        "Find Email",
+                        style: TextStyle(
+                          fontSize: 32,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                          controller: _emailEditingController,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (val) => val!.isEmpty ||
+                                  !val.contains("@") ||
+                                  !val.contains(".")
+                              ? "enter a valid email"
+                              : null,
+                              style: const TextStyle(
+                          color: Colors.white,
+                        ),
+                          decoration: InputDecoration(
+                              labelText: 'Email',
+                              labelStyle: const TextStyle(
+                                color: Colors.white,
+                              ),
+                              icon: const Icon(
+                                Icons.email,
+                                color: Colors.white,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    color: Colors.white, width: 1.0),
+                                borderRadius: BorderRadius.circular(20.0),
+                              ))),
+                      const SizedBox(
+                        height: 24,
+                      ),
+                      MaterialButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0)),
+                        minWidth: cardwitdh,
+                        height: 50,
+                        elevation: 10,
+                        onPressed: _findUser,
+                        color: Theme.of(context).colorScheme.primary,
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(color: Colors.white, fontSize: 25),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                    ]),
+                  )),
+            ],
+          ),
+        ))),
+      ),
     );
   }
 

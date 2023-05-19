@@ -23,6 +23,7 @@ class _ServiceEditDialogState extends State<ServiceEditDialog> {
   final TextEditingController _snameEditingController = TextEditingController();
   final TextEditingController _spriceEditingController =
       TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -42,78 +43,94 @@ class _ServiceEditDialogState extends State<ServiceEditDialog> {
       title: const Text("Edit service name"),
       content: SizedBox(
         width: 300.0,
-        height: 180.0,
-        child: Column(
-          children: [
-            TextFormField(
-              textInputAction: TextInputAction.next,
-              controller: _snameEditingController,
-              validator: (val) =>
-                  val!.isEmpty ? "Please enter service name" : null,
-              keyboardType: TextInputType.text,
-              decoration: const InputDecoration(
-                labelText: 'Service Name',
-                icon: Icon(Icons.feed),
-              ),
-            ),
-            TextFormField(
-              textInputAction: TextInputAction.done,
-              controller: _spriceEditingController,
-              validator: (val) =>
-                  val!.isEmpty ? "Please enter service price" : null,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Service Price',
-                icon: Icon(Icons.attach_money),
-              ),
-            ),
-            const SizedBox(
-              height: 18,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Flexible(
-                  child: Text('Avalability',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      )),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _isEnabled = !_isEnabled;
-                    });
-                  },
-                  child: Container(
-                    width: 50.0,
-                    height: 30.0,
-                    decoration: BoxDecoration(
-                      color: _isEnabled ? Colors.green : Colors.grey,
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: _isEnabled
-                          ? MainAxisAlignment.end
-                          : MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 20.0,
-                          height: 20.0,
-                          margin: const EdgeInsets.all(5.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                      ],
-                    ),
+        height: 225.0,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              TextFormField(
+                textInputAction: TextInputAction.next,
+                controller: _snameEditingController,
+                validator: (val) =>
+                    val!.isEmpty ? "Please enter service name" : null,
+                keyboardType: TextInputType.text,
+                decoration: const InputDecoration(
+                  labelText: 'Service Name',
+                  labelStyle: TextStyle(
+                    color: Colors.blueGrey,
+                  ),
+                  icon: Icon(
+                    Icons.feed,
+                    color: Colors.blueGrey,
                   ),
                 ),
-              ],
-            ),
-          ],
+              ),
+              TextFormField(
+                textInputAction: TextInputAction.done,
+                controller: _spriceEditingController,
+                validator: (val) =>
+                    val!.isEmpty ? "Please enter service price" : null,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Service Price',
+                  labelStyle: TextStyle(
+                    color: Colors.blueGrey,
+                  ),
+                  icon: Icon(
+                    Icons.attach_money,
+                    color: Colors.blueGrey,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 18,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Flexible(
+                    child: Text('Avalability',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isEnabled = !_isEnabled;
+                      });
+                    },
+                    child: Container(
+                      width: 50.0,
+                      height: 30.0,
+                      decoration: BoxDecoration(
+                        color: _isEnabled ? Colors.green : Colors.grey,
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: _isEnabled
+                            ? MainAxisAlignment.end
+                            : MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 20.0,
+                            height: 20.0,
+                            margin: const EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       actions: <Widget>[
@@ -126,6 +143,9 @@ class _ServiceEditDialogState extends State<ServiceEditDialog> {
                 style: TextStyle(),
               ),
               onPressed: () {
+                if (!_formKey.currentState!.validate()) {
+                  return;
+                }
                 Navigator.of(context).pop();
                 String id = widget.service.serviceId.toString();
                 String newname = _snameEditingController.text;

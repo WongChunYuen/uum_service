@@ -26,6 +26,7 @@ class _ShopServiceScreenState extends State<ShopServiceScreen> {
       TextEditingController();
   final TextEditingController _createspriceEditingController =
       TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   Future refresh() async {
     _loadServices();
@@ -54,17 +55,32 @@ class _ShopServiceScreenState extends State<ShopServiceScreen> {
       rowcount = 3;
     }
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         title: const Text("Shop's Services"),
       ),
       body: serviceList.isEmpty
-          ? Center(
-              child: RefreshIndicator(
-              onRefresh: refresh,
-              child: Text(titlecenter,
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold)),
-            ))
+          ? titlecenter == "No Service Available"
+              ? RefreshIndicator(
+                  onRefresh: refresh,
+                  child: ListView(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 300.0),
+                        child: Center(
+                          child: Text(
+                            titlecenter,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : const Center(child: CircularProgressIndicator())
           : Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -126,6 +142,7 @@ class _ShopServiceScreenState extends State<ShopServiceScreen> {
           color: serviceList[index].serviceStatus == 'available'
               ? Colors.white
               : Colors.black12,
+          borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
@@ -142,7 +159,7 @@ class _ShopServiceScreenState extends State<ShopServiceScreen> {
             children: <Widget>[
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 11.0, 2.0, 0.0),
+                  padding: const EdgeInsets.fromLTRB(20.0, 8.0, 2.0, 0.0),
                   child: _articleDescription(
                     title: title,
                     price: price,
@@ -244,32 +261,48 @@ class _ShopServiceScreenState extends State<ShopServiceScreen> {
           title: const Text("Create Service"),
           content: SizedBox(
             width: 300.0,
-            height: 125.0,
-            child: Column(
-              children: [
-                TextFormField(
-                  textInputAction: TextInputAction.next,
-                  controller: _createsnameEditingController,
-                  validator: (val) =>
-                      val!.isEmpty ? "Please enter service name" : null,
-                  keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                    labelText: 'Service Name',
-                    icon: Icon(Icons.feed),
+            height: 170.0,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextFormField(
+                    textInputAction: TextInputAction.next,
+                    controller: _createsnameEditingController,
+                    validator: (val) =>
+                        val!.isEmpty ? "Please enter service name" : null,
+                    keyboardType: TextInputType.text,
+                    decoration: const InputDecoration(
+                      labelText: 'Service Name',
+                      labelStyle: TextStyle(
+                        color: Colors.blueGrey,
+                      ),
+                      icon: Icon(
+                        Icons.feed,
+                        color: Colors.blueGrey,
+                      ),
+                    ),
                   ),
-                ),
-                TextFormField(
-                  textInputAction: TextInputAction.done,
-                  controller: _createspriceEditingController,
-                  validator: (val) =>
-                      val!.isEmpty ? "Please enter service price" : null,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Service Price',
-                    icon: Icon(Icons.attach_money),
+                  TextFormField(
+                    textInputAction: TextInputAction.done,
+                    controller: _createspriceEditingController,
+                    validator: (val) =>
+                        val!.isEmpty ? "Please enter service price" : null,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'Service Price',
+                      labelStyle: TextStyle(
+                        color: Colors.blueGrey,
+                      ),
+                      icon: Icon(
+                        Icons.attach_money,
+                        color: Colors.blueGrey,
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           actions: <Widget>[
@@ -282,6 +315,9 @@ class _ShopServiceScreenState extends State<ShopServiceScreen> {
                     style: TextStyle(),
                   ),
                   onPressed: () {
+                    if (!_formKey.currentState!.validate()) {
+                      return;
+                    }
                     Navigator.of(context).pop();
                     String createsname = _createsnameEditingController.text;
                     String createsprice = _createspriceEditingController.text;

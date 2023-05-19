@@ -65,6 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return Future.value(false);
       },
       child: Scaffold(
+        backgroundColor: Colors.grey[200],
         appBar: AppBar(title: const Text("Profile")),
         body: SingleChildScrollView(
           child: Container(
@@ -109,7 +110,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   Text(
                     "ID: ${widget.user.id}",
-                    style: const TextStyle(fontSize: 25),
+                    style: const TextStyle(
+                      fontSize: 25,
+                    ),
                     textAlign: TextAlign.left,
                   ),
                   const SizedBox(
@@ -128,10 +131,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             controller: _nameEditingController,
                             enabled: false,
                             decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                icon: Icon(Icons.person),
-                                labelText: 'Name',
-                                suffixIcon: Icon(Icons.edit)),
+                              border: OutlineInputBorder(),
+                              icon: Icon(
+                                Icons.person,
+                                color: Colors.blueGrey,
+                              ),
+                              labelText: 'Name',
+                              labelStyle: TextStyle(
+                                color: Colors.blueGrey,
+                              ),
+                              suffixIcon: Icon(
+                                Icons.edit,
+                                color: Colors.blueGrey,
+                              ),
+                            ),
                           ),
                         ),
                         InkWell(
@@ -143,9 +156,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             enabled: false,
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
-                              icon: Icon(Icons.email),
+                              icon: Icon(
+                                Icons.email,
+                                color: Colors.blueGrey,
+                              ),
                               labelText: 'Email',
-                              suffixIcon: Icon(Icons.edit),
+                              labelStyle: TextStyle(
+                                color: Colors.blueGrey,
+                              ),
+                              suffixIcon: Icon(
+                                Icons.edit,
+                                color: Colors.blueGrey,
+                              ),
                             ),
                           ),
                         ),
@@ -158,9 +180,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             enabled: false,
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
-                              icon: Icon(Icons.phone),
+                              icon: Icon(
+                                Icons.phone,
+                                color: Colors.blueGrey,
+                              ),
                               labelText: 'Phone',
-                              suffixIcon: Icon(Icons.edit),
+                              labelStyle: TextStyle(
+                                color: Colors.blueGrey,
+                              ),
+                              suffixIcon: Icon(
+                                Icons.edit,
+                                color: Colors.blueGrey,
+                              ),
                             ),
                           ),
                         ),
@@ -173,9 +204,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             enabled: false,
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
-                              icon: Icon(Icons.location_on),
+                              icon: Icon(
+                                Icons.location_on,
+                                color: Colors.blueGrey,
+                              ),
                               labelText: 'Address',
-                              suffixIcon: Icon(Icons.edit),
+                              labelStyle: TextStyle(
+                                color: Colors.blueGrey,
+                              ),
+                              suffixIcon: Icon(
+                                Icons.edit,
+                                color: Colors.blueGrey,
+                              ),
                             ),
                           ),
                         ),
@@ -184,8 +224,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           enabled: false,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
-                            icon: Icon(Icons.date_range),
+                            icon: Icon(
+                              Icons.date_range,
+                              color: Colors.blueGrey,
+                            ),
                             labelText: 'Date register',
+                            labelStyle: TextStyle(
+                              color: Colors.blueGrey,
+                            ),
                           ),
                         ),
                         const SizedBox(
@@ -326,7 +372,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       uiSettings: [
         AndroidUiSettings(
             toolbarTitle: 'Cropper',
-            toolbarColor: Colors.indigo,
+            toolbarColor: Colors.blueGrey,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false),
@@ -387,7 +433,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Edit name"),
+          title: const Center(child: Text("Edit name")),
           content: TextFormField(
             controller: _nameEditingController,
             decoration: const InputDecoration(labelText: 'Name'),
@@ -465,7 +511,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Edit email"),
+          title: const Center(child: Text("Edit email")),
           content: TextFormField(
             controller: _emailEditingController,
             decoration: const InputDecoration(labelText: 'Email'),
@@ -646,7 +692,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Edit phone"),
+          title: const Center(child: Text("Edit phone")),
           content: TextFormField(
             controller: _phoneEditingController,
             keyboardType: TextInputType.phone,
@@ -725,7 +771,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Edit address"),
+          title: const Center(child: Text("Edit address")),
           content: TextFormField(
             controller: _addressEditingController,
             decoration: const InputDecoration(labelText: 'Address'),
@@ -865,7 +911,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       uiSettings: [
         AndroidUiSettings(
             toolbarTitle: 'Crop MyKad',
-            toolbarColor: Colors.indigo,
+            toolbarColor: Colors.blueGrey,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false),
@@ -903,7 +949,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       uiSettings: [
         AndroidUiSettings(
             toolbarTitle: 'Crop Selfie',
-            toolbarColor: Colors.indigo,
+            toolbarColor: Colors.blueGrey,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false),

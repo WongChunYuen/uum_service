@@ -4,9 +4,10 @@ class Shop {
   String? serviceImages;
   String? shopName;
   String? shopDesc;
-  String? shopBank;
-  String? shopBankAcc;
+  String? shopOpen;
+  String? shopClose;
   String? shopAddress;
+  String? shopStatus;
   String? shopDate;
 
   Shop(
@@ -15,9 +16,10 @@ class Shop {
       this.serviceImages,
       this.shopName,
       this.shopDesc,
-      this.shopBank,
-      this.shopBankAcc,
+      this.shopOpen,
+      this.shopClose,
       this.shopAddress,
+      this.shopStatus,
       this.shopDate});
 
   Shop.fromJson(Map<String, dynamic> json) {
@@ -26,9 +28,10 @@ class Shop {
     serviceImages = json['service_imagesNum'];
     shopName = json['shop_name'];
     shopDesc = json['shop_desc'];
-    shopBank = json['shop_bank'];
-    shopBankAcc = json['shop_bankAcc'];
+    shopOpen = json['shop_openTime'];
+    shopClose = json['shop_closeTime'];
     shopAddress = json['shop_address'];
+    shopStatus = json['shop_status'];
     shopDate = json['shop_date'];
   }
 
@@ -39,9 +42,10 @@ class Shop {
     data['service_imagesNum'] = serviceImages;
     data['shop_name'] = shopName;
     data['shop_desc'] = shopDesc;
-    data['shop_bank'] = shopBank;
-    data['shop_bankAcc'] = shopBankAcc;
+    data['shop_openTime'] = shopOpen;
+    data['shop_closeTime'] = shopClose;
     data['shop_address'] = shopAddress;
+    data['shop_status'] = shopStatus;
     data['shop_date'] = shopDate;
     return data;
   }
