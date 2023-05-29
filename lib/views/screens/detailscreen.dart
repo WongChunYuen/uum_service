@@ -42,7 +42,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
   late double screenHeight, screenWidth, resWidth;
   TimeOfDay selectedOpenTime = TimeOfDay.now();
   TimeOfDay selectedCloseTime = TimeOfDay.now();
-  
+
   late String openTime, closeTime;
 
   @override
@@ -439,7 +439,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     ),
                     onPressed: () {
                       Navigator.of(context).pop();
-                      Navigator.of(context).pop();
                       _updateShop();
                     },
                   ),
@@ -626,7 +625,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             fontSize: 14.0);
-        _editKey = false;
+        setState(() {
+          _editKey = false;
+        });
         DefaultCacheManager manager = DefaultCacheManager();
         manager.emptyCache();
         return;
