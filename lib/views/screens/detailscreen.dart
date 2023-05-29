@@ -439,6 +439,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     ),
                     onPressed: () {
                       Navigator.of(context).pop();
+                      Navigator.of(context).pop();
                       _updateShop();
                     },
                   ),
